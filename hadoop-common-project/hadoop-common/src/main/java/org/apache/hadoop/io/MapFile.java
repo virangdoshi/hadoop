@@ -494,7 +494,9 @@ public class MapFile {
 	  // compressed map files used to do this (multiple entries would point
 	  // at the same block)
 	  if (position.get() == lastIndex)
-	    continue;
+	    {
+	        continue;
+	    }
 
           if (count == positions.length) {
 	    positions = Arrays.copyOf(positions, positions.length * 2);

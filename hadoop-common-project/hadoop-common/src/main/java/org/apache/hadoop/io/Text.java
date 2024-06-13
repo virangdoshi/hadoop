@@ -181,7 +181,9 @@ public class Text extends BinaryComparable
               break; // no match
             }
           }
-          if (found) return pos;
+          if (found) {
+              return pos;
+          }
         }
       }
       return -1; // not found
