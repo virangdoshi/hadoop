@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.security.token.delegation.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.minikdc.MiniKdc;
@@ -228,8 +230,8 @@ public class TestWebDelegationToken {
     context.addServlet(new ServletHolder(PingServlet.class), "/bar");
     try {
       jetty.start();
-      URL nonAuthURL = new URL(getJettyURL() + "/foo/bar");
-      URL authURL = new URL(getJettyURL() + "/foo/bar?authenticated=foo");
+      URL nonAuthURL = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+      URL authURL = Urls.create(getJettyURL() + "/foo/bar?authenticated=foo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       // unauthenticated access to URL
       HttpURLConnection conn = (HttpURLConnection) nonAuthURL.openConnection();
@@ -241,14 +243,14 @@ public class TestWebDelegationToken {
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
 
       // unauthenticated access to get delegation token
-      URL url = new URL(nonAuthURL.toExternalForm() + "?op=GETDELEGATIONTOKEN");
+      URL url = Urls.create(nonAuthURL.toExternalForm() + "?op=GETDELEGATIONTOKEN", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       Assert.assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED,
           conn.getResponseCode());
 
       // authenticated access to get delegation token
-      url = new URL(authURL.toExternalForm() +
-          "&op=GETDELEGATIONTOKEN&renewer=foo");
+      url = Urls.create(authURL.toExternalForm() +
+          "&op=GETDELEGATIONTOKEN&renewer=foo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
       ObjectMapper mapper = new ObjectMapper();
@@ -257,56 +259,56 @@ public class TestWebDelegationToken {
       Assert.assertNotNull(dt);
 
       // delegation token access to URL
-      url = new URL(nonAuthURL.toExternalForm() + "?delegation=" + dt);
+      url = Urls.create(nonAuthURL.toExternalForm() + "?delegation=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
 
       // delegation token and authenticated access to URL
-      url = new URL(authURL.toExternalForm() + "&delegation=" + dt);
+      url = Urls.create(authURL.toExternalForm() + "&delegation=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
 
       // renewew delegation token, unauthenticated access to URL
-      url = new URL(nonAuthURL.toExternalForm() +
-          "?op=RENEWDELEGATIONTOKEN&token=" + dt);
+      url = Urls.create(nonAuthURL.toExternalForm() +
+          "?op=RENEWDELEGATIONTOKEN&token=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("PUT");
       Assert.assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED,
           conn.getResponseCode());
 
       // renewew delegation token, authenticated access to URL
-      url = new URL(authURL.toExternalForm() +
-          "&op=RENEWDELEGATIONTOKEN&token=" + dt);
+      url = Urls.create(authURL.toExternalForm() +
+          "&op=RENEWDELEGATIONTOKEN&token=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("PUT");
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
 
       // renewew delegation token, authenticated access to URL, not renewer
-      url = new URL(getJettyURL() +
-          "/foo/bar?authenticated=bar&op=RENEWDELEGATIONTOKEN&token=" + dt);
+      url = Urls.create(getJettyURL() +
+          "/foo/bar?authenticated=bar&op=RENEWDELEGATIONTOKEN&token=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("PUT");
       Assert.assertEquals(HttpURLConnection.HTTP_FORBIDDEN,
           conn.getResponseCode());
 
       // cancel delegation token, nonauthenticated access to URL
-      url = new URL(nonAuthURL.toExternalForm() +
-          "?op=CANCELDELEGATIONTOKEN&token=" + dt);
+      url = Urls.create(nonAuthURL.toExternalForm() +
+          "?op=CANCELDELEGATIONTOKEN&token=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("PUT");
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
 
       // cancel canceled delegation token, nonauthenticated access to URL
-      url = new URL(nonAuthURL.toExternalForm() +
-          "?op=CANCELDELEGATIONTOKEN&token=" + dt);
+      url = Urls.create(nonAuthURL.toExternalForm() +
+          "?op=CANCELDELEGATIONTOKEN&token=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("PUT");
       Assert.assertEquals(HttpURLConnection.HTTP_NOT_FOUND,
           conn.getResponseCode());
 
       // get new delegation token
-      url = new URL(authURL.toExternalForm() +
-          "&op=GETDELEGATIONTOKEN&renewer=foo");
+      url = Urls.create(authURL.toExternalForm() +
+          "&op=GETDELEGATIONTOKEN&renewer=foo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
       mapper = new ObjectMapper();
@@ -315,8 +317,8 @@ public class TestWebDelegationToken {
       Assert.assertNotNull(dt);
 
       // cancel delegation token, authenticated access to URL
-      url = new URL(authURL.toExternalForm() +
-          "&op=CANCELDELEGATIONTOKEN&token=" + dt);
+      url = Urls.create(authURL.toExternalForm() +
+          "&op=CANCELDELEGATIONTOKEN&token=" + dt, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("PUT");
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
@@ -349,9 +351,9 @@ public class TestWebDelegationToken {
 
     try {
       jetty.start();
-      final URL nonAuthURL = new URL(getJettyURL() + "/foo/bar");
-      URL authURL = new URL(getJettyURL() + "/foo/bar?authenticated=foo");
-      URL authURL2 = new URL(getJettyURL() + "/foo/bar?authenticated=bar");
+      final URL nonAuthURL = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+      URL authURL = Urls.create(getJettyURL() + "/foo/bar?authenticated=foo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+      URL authURL2 = Urls.create(getJettyURL() + "/foo/bar?authenticated=bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       DelegationTokenAuthenticatedURL.Token token =
           new DelegationTokenAuthenticatedURL.Token();
@@ -460,7 +462,7 @@ public class TestWebDelegationToken {
       context.setAttribute(DelegationTokenAuthenticationFilter.
               DELEGATION_TOKEN_SECRET_MANAGER_ATTR, secretMgr);
       jetty.start();
-      URL authURL = new URL(getJettyURL() + "/foo/bar?authenticated=foo");
+      URL authURL = Urls.create(getJettyURL() + "/foo/bar?authenticated=foo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       DelegationTokenAuthenticatedURL.Token token =
           new DelegationTokenAuthenticatedURL.Token();
@@ -537,7 +539,7 @@ public class TestWebDelegationToken {
 
     try {
       jetty.start();
-      final URL url = new URL(getJettyURL() + "/foo/bar");
+      final URL url = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       UserGroupInformation ugi = UserGroupInformation.createRemoteUser(FOO_USER);
       ugi.doAs(new PrivilegedExceptionAction<Void>() {
@@ -606,7 +608,7 @@ public class TestWebDelegationToken {
 
     try {
       jetty.start();
-      final URL url = new URL(getJettyURL() + "/foo/bar");
+      final URL url = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       UserGroupInformation ugi = UserGroupInformation.createRemoteUser(FOO_USER);
       ugi.doAs(new PrivilegedExceptionAction<Void>() {
@@ -766,7 +768,7 @@ public class TestWebDelegationToken {
           new DelegationTokenAuthenticatedURL.Token();
       final DelegationTokenAuthenticatedURL aUrl =
           new DelegationTokenAuthenticatedURL();
-      final URL url = new URL(getJettyURL() + "/foo/bar");
+      final URL url = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       try {
         aUrl.getDelegationToken(url, token, FOO_USER, doAsUser);
@@ -836,20 +838,20 @@ public class TestWebDelegationToken {
 
     try {
       jetty.start();
-      final URL url = new URL(getJettyURL() + "/foo/bar");
+      final URL url = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       // proxyuser using raw HTTP, verifying doAs is case insensitive
       String strUrl = String.format("%s?user.name=%s&doas=%s", 
           url.toExternalForm(), FOO_USER, OK_USER);
       HttpURLConnection conn = 
-          (HttpURLConnection) new URL(strUrl).openConnection();
+          (HttpURLConnection) Urls.create(strUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
       List<String> ret = IOUtils.readLines(conn.getInputStream());
       Assert.assertEquals(1, ret.size());
       Assert.assertEquals(OK_USER, ret.get(0));
       strUrl = String.format("%s?user.name=%s&DOAS=%s", url.toExternalForm(), 
           FOO_USER, OK_USER);
-      conn = (HttpURLConnection) new URL(strUrl).openConnection();
+      conn = (HttpURLConnection) Urls.create(strUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
       ret = IOUtils.readLines(conn.getInputStream());
       Assert.assertEquals(1, ret.size());
@@ -933,7 +935,7 @@ public class TestWebDelegationToken {
 
     try {
       jetty.start();
-      final URL url = new URL(getJettyURL() + "/foo/bar");
+      final URL url = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       UserGroupInformation ugi = UserGroupInformation.createRemoteUser(FOO_USER);
       ugi.doAs(new PrivilegedExceptionAction<Void>() {
@@ -994,7 +996,7 @@ public class TestWebDelegationToken {
 
     try {
       jetty.start();
-      final URL url = new URL(getJettyURL() + "/foo/bar");
+      final URL url = Urls.create(getJettyURL() + "/foo/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       UserGroupInformation ugi = UserGroupInformation.createRemoteUser(FOO_USER);
       ugi.doAs(new PrivilegedExceptionAction<Void>() {

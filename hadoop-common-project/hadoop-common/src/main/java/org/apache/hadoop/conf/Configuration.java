@@ -23,6 +23,8 @@ import com.ctc.wstx.io.StreamBootstrapper;
 import com.ctc.wstx.io.SystemId;
 import com.ctc.wstx.stax.WstxInputFactory;
 import com.google.common.annotations.VisibleForTesting;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import java.io.BufferedInputStream;
 import java.io.DataInput;
@@ -2886,7 +2888,7 @@ public class Configuration implements Iterable<Map.Entry<String,String>>,
             } else {
               URL url;
               try {
-                url = new URL(confInclude);
+                url = Urls.create(confInclude, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
                 url.openConnection().connect();
               } catch (IOException ioe) {
                 File href = new File(confInclude);

@@ -13,6 +13,8 @@
  */
 package org.apache.hadoop.security.authentication.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.security.authentication.server.MultiSchemeAuthenticationHandler.SCHEMES_PROPERTY;
 import static org.apache.hadoop.security.authentication.server.MultiSchemeAuthenticationHandler.AUTH_HANDLER_PROPERTY;
 import static org.apache.hadoop.security.authentication.server.AuthenticationFilter.AUTH_TYPE;
@@ -117,7 +119,7 @@ public class TestKerberosAuthenticator extends KerberosSecurityTestcase {
     AuthenticatorTestCase.setAuthenticationHandlerConfig(getAuthenticationHandlerConfiguration());
     auth.start();
     try {
-      URL url = new URL(auth.getBaseURL());
+      URL url = Urls.create(auth.getBaseURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.connect();
       Assert.assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, conn.getResponseCode());
@@ -190,7 +192,7 @@ public class TestKerberosAuthenticator extends KerberosSecurityTestcase {
         .setAuthenticationHandlerConfig(getMultiAuthHandlerConfiguration());
     auth.start();
     try {
-      URL url = new URL(auth.getBaseURL());
+      URL url = Urls.create(auth.getBaseURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.connect();
       Assert.assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED,

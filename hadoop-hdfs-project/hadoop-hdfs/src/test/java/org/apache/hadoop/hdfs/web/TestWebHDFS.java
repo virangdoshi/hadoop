@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.hdfs.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.FS_TRASH_INTERVAL_KEY;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.IO_FILE_BUFFER_SIZE_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_BLOCK_SIZE_KEY;
@@ -812,11 +814,10 @@ public class TestWebHDFS {
         os.write(CONTENTS);
       }
       InetSocketAddress addr = cluster.getNameNode().getHttpAddress();
-      URL url = new URL("http", addr.getHostString(), addr
+      URL url = Urls.create("http", addr.getHostString(), addr
           .getPort(), WebHdfsFileSystem.PATH_PREFIX + PATH + "?op=OPEN" +
           Param.toSortedString("&", new OffsetParam((long) OFFSET),
-                               new LengthParam((long) LENGTH))
-      );
+                               new LengthParam((long) LENGTH)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setInstanceFollowRedirects(true);
       Assert.assertEquals(LENGTH, conn.getContentLength());
@@ -1028,8 +1029,7 @@ public class TestWebHDFS {
 
       // Case 1
       // URL without length or offset parameters
-      URL url1 = new URL("http", addr.getHostString(), addr.getPort(),
-          WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS");
+      URL url1 = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       String response1 = getResponse(url1, "GET");
       // Parse BlockLocation array from json output using object mapper
@@ -1040,9 +1040,8 @@ public class TestWebHDFS {
 
       // Case 2
       // URL contains length and offset parameters
-      URL url2 = new URL("http", addr.getHostString(), addr.getPort(),
-          WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
-              + "&length=" + length + "&offset=" + offset);
+      URL url2 = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
+              + "&length=" + length + "&offset=" + offset, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       String response2 = getResponse(url2, "GET");
       BlockLocation[] locationArray2 = toBlockLocationArray(response2);
@@ -1051,9 +1050,8 @@ public class TestWebHDFS {
 
       // Case 3
       // URL contains length parameter but without offset parameters
-      URL url3 = new URL("http", addr.getHostString(), addr.getPort(),
-          WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
-              + "&length=" + length);
+      URL url3 = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
+              + "&length=" + length, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       String response3 = getResponse(url3, "GET");
       BlockLocation[] locationArray3 = toBlockLocationArray(response3);
@@ -1062,9 +1060,8 @@ public class TestWebHDFS {
 
       // Case 4
       // URL contains offset parameter but without length parameter
-      URL url4 = new URL("http", addr.getHostString(), addr.getPort(),
-          WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
-              + "&offset=" + offset);
+      URL url4 = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
+              + "&offset=" + offset, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       String response4 = getResponse(url4, "GET");
       BlockLocation[] locationArray4 = toBlockLocationArray(response4);
@@ -1073,9 +1070,8 @@ public class TestWebHDFS {
 
       // Case 5
       // URL specifies offset exceeds the file length
-      URL url5 = new URL("http", addr.getHostString(), addr.getPort(),
-          WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
-              + "&offset=1200");
+      URL url5 = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/foo?op=GETFILEBLOCKLOCATIONS"
+              + "&offset=1200", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       String response5 = getResponse(url5, "GET");
       BlockLocation[] locationArray5 = toBlockLocationArray(response5);
@@ -1319,7 +1315,7 @@ public class TestWebHDFS {
 
     //Test that the DN allows CORS on Create
     if(TYPE.equals("CREATE")) {
-      URL dnLocation = new URL(responseJson.getString("Location"));
+      URL dnLocation = Urls.create(responseJson.getString("Location"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection dnConn = (HttpURLConnection) dnLocation.openConnection();
       dnConn.setRequestMethod("OPTIONS");
       Assert.assertEquals("Datanode url : " + dnLocation + " didn't allow "
@@ -1341,9 +1337,8 @@ public class TestWebHDFS {
       LOG.info("Started cluster");
       InetSocketAddress addr = cluster.getNameNode().getHttpAddress();
 
-      URL url = new URL("http", addr.getHostString(), addr.getPort(),
-        WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirectCreate" +
-        "?op=CREATE" + Param.toSortedString("&", new NoRedirectParam(true)));
+      URL url = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirectCreate" +
+        "?op=CREATE" + Param.toSortedString("&", new NoRedirectParam(true)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       LOG.info("Sending create request " + url);
       checkResponseContainsLocation(url, "PUT");
 
@@ -1356,22 +1351,19 @@ public class TestWebHDFS {
       try (OutputStream os = fs.create(new Path(PATH))) {
         os.write(CONTENTS);
       }
-      url = new URL("http", addr.getHostString(), addr.getPort(),
-        WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirect" +
-        "?op=OPEN" + Param.toSortedString("&", new NoRedirectParam(true)));
+      url = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirect" +
+        "?op=OPEN" + Param.toSortedString("&", new NoRedirectParam(true)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       LOG.info("Sending open request " + url);
       checkResponseContainsLocation(url, "GET");
 
-      url = new URL("http", addr.getHostString(), addr.getPort(),
-        WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirect" +
+      url = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirect" +
         "?op=GETFILECHECKSUM" + Param.toSortedString(
-        "&", new NoRedirectParam(true)));
+        "&", new NoRedirectParam(true)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       LOG.info("Sending getfilechecksum request " + url);
       checkResponseContainsLocation(url, "GET");
 
-      url = new URL("http", addr.getHostString(), addr.getPort(),
-        WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirect" +
-        "?op=APPEND" + Param.toSortedString("&", new NoRedirectParam(true)));
+      url = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + "/testWebHdfsNoRedirect" +
+        "?op=APPEND" + Param.toSortedString("&", new NoRedirectParam(true)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       LOG.info("Sending append request " + url);
       checkResponseContainsLocation(url, "POST");
     } finally {

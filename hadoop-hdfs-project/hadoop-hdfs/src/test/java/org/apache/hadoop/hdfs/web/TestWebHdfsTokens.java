@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.hdfs.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.KERBEROS;
 import static org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod.SIMPLE;
 import static org.junit.Assert.assertEquals;
@@ -274,7 +276,7 @@ public class TestWebHdfsTokens {
       }) {
         @Override
         public URLConnection openConnection(URL url) throws IOException {
-          return super.openConnection(new URL(url + "&service=foo&kind=bar"));
+          return super.openConnection(Urls.create(url + "&service=foo&kind=bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
         }
       };
       Whitebox.setInternalState(fs, "connectionFactory", factory);

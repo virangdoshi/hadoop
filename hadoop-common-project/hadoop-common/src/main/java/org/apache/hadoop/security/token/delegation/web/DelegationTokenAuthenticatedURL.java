@@ -18,6 +18,8 @@
 package org.apache.hadoop.security.token.delegation.web;
 
 import com.google.common.base.Preconditions;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.io.Text;
@@ -261,7 +263,7 @@ public class DelegationTokenAuthenticatedURL extends AuthenticatedURL {
             param.getValue());
         separator = "&";
       }
-      url = new URL(sb.toString());
+      url = Urls.create(sb.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
     return url;
   }

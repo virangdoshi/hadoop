@@ -13,6 +13,8 @@
  */
 package org.apache.hadoop.security.authentication.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -67,7 +69,7 @@ public class PseudoAuthenticator implements Authenticator {
     String strUrl = url.toString();
     String paramSeparator = (strUrl.contains("?")) ? "&" : "?";
     strUrl += paramSeparator + USER_NAME_EQ + getUserName();
-    url = new URL(strUrl);
+    url = Urls.create(strUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = token.openConnection(url, connConfigurator);
     conn.setRequestMethod("OPTIONS");
     conn.connect();

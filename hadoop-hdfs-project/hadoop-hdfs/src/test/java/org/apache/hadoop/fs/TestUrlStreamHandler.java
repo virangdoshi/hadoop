@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -87,8 +89,8 @@ public class TestUrlStreamHandler {
       // Second, open and read the file content through the URL API
       URI uri = fs.getUri();
       URL fileURL =
-          new URL(uri.getScheme(), uri.getHost(), uri.getPort(), filePath
-              .toString());
+          Urls.create(uri.getScheme(), uri.getHost(), uri.getPort(), filePath
+              .toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       InputStream is = fileURL.openStream();
       assertNotNull(is);

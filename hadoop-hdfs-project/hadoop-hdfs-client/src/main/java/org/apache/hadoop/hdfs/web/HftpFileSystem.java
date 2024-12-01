@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.hdfs.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -289,8 +291,7 @@ public class HftpFileSystem extends FileSystem
    * @throws IOException on error constructing the URL
    */
   protected URL getNamenodeURL(String path, String query) throws IOException {
-    final URL url = new URL(getUnderlyingProtocol(), nnUri.getHost(),
-          nnUri.getPort(), path + '?' + query);
+    final URL url = Urls.create(getUnderlyingProtocol(), nnUri.getHost(), nnUri.getPort(), path + '?' + query, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     if (LOG.isTraceEnabled()) {
       LOG.trace("url=" + url);
     }

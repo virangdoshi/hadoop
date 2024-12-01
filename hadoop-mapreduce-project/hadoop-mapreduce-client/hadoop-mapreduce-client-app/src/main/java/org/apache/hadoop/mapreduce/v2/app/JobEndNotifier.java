@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.mapreduce.v2.app;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -161,7 +163,7 @@ public class JobEndNotifier implements Configurable {
 
     // Create the URL, ensure sanity
     try {
-      urlToNotify = new URL(userUrl);
+      urlToNotify = Urls.create(userUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     } catch (MalformedURLException mue) {
       Log.warn("Job end notification couldn't parse " + userUrl, mue);
       return;

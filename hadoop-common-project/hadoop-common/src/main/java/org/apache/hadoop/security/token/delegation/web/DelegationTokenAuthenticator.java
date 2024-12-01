@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.security.token.delegation.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.security.SecurityUtil;
@@ -300,7 +302,7 @@ public abstract class DelegationTokenAuthenticator implements Authenticator {
           append(URLEncoder.encode(entry.getValue(), "UTF8"));
       separator = "&";
     }
-    url = new URL(sb.toString());
+    url = Urls.create(sb.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     AuthenticatedURL aUrl = new AuthenticatedURL(this, connConfigurator);
     org.apache.hadoop.security.token.Token<AbstractDelegationTokenIdentifier>
         dt = null;

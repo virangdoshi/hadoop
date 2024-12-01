@@ -19,6 +19,8 @@
 package org.apache.hadoop.yarn.webapp;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -257,7 +259,7 @@ public class WebApps {
         if (devMode) {
           if (port > 0) {
             try {
-              new URL("http://localhost:"+ port +"/__stop").getContent();
+              Urls.create("http://localhost:"+ port +"/__stop", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).getContent();
               LOG.info("stopping existing webapp instance");
               Thread.sleep(100);
             } catch (ConnectException e) {

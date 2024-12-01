@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.tools.offlineImageViewer;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.fs.permission.AclEntryScope.ACCESS;
 import static org.apache.hadoop.fs.permission.AclEntryType.GROUP;
 import static org.apache.hadoop.fs.permission.AclEntryType.OTHER;
@@ -372,12 +374,12 @@ public class TestOfflineImageViewer {
       assertEquals(0, statuses.length);
 
       // LISTSTATUS operation to a invalid path
-      URL url = new URL("http://localhost:" + port +
-                    "/webhdfs/v1/invalid/?op=LISTSTATUS");
+      URL url = Urls.create("http://localhost:" + port +
+                    "/webhdfs/v1/invalid/?op=LISTSTATUS", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       verifyHttpResponseCode(HttpURLConnection.HTTP_NOT_FOUND, url);
 
       // LISTSTATUS operation to a invalid prefix
-      url = new URL("http://localhost:" + port + "/foo");
+      url = Urls.create("http://localhost:" + port + "/foo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       verifyHttpResponseCode(HttpURLConnection.HTTP_NOT_FOUND, url);
 
       // GETFILESTATUS operation
@@ -385,16 +387,16 @@ public class TestOfflineImageViewer {
       compareFile(expected, status);
 
       // GETFILESTATUS operation to a invalid path
-      url = new URL("http://localhost:" + port +
-                    "/webhdfs/v1/invalid/?op=GETFILESTATUS");
+      url = Urls.create("http://localhost:" + port +
+                    "/webhdfs/v1/invalid/?op=GETFILESTATUS", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       verifyHttpResponseCode(HttpURLConnection.HTTP_NOT_FOUND, url);
 
       // invalid operation
-      url = new URL("http://localhost:" + port + "/webhdfs/v1/?op=INVALID");
+      url = Urls.create("http://localhost:" + port + "/webhdfs/v1/?op=INVALID", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       verifyHttpResponseCode(HttpURLConnection.HTTP_BAD_REQUEST, url);
 
       // invalid method
-      url = new URL("http://localhost:" + port + "/webhdfs/v1/?op=LISTSTATUS");
+      url = Urls.create("http://localhost:" + port + "/webhdfs/v1/?op=LISTSTATUS", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("POST");
       connection.connect();

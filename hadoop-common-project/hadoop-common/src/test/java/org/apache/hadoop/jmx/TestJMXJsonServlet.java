@@ -18,6 +18,8 @@
 package org.apache.hadoop.jmx;
 
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.http.HttpServer2;
 import org.apache.hadoop.http.HttpServerFunctionalTest;
 import org.junit.AfterClass;
@@ -55,38 +57,36 @@ public class TestJMXJsonServlet extends HttpServerFunctionalTest {
   }
   
   @Test public void testQury() throws Exception {
-    String result = readOutput(new URL(baseUrl, "/jmx?qry=java.lang:type=Runtime"));
+    String result = readOutput(Urls.create(baseUrl, "/jmx?qry=java.lang:type=Runtime", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertReFind("\"name\"\\s*:\\s*\"java.lang:type=Runtime\"", result);
     assertReFind("\"modelerType\"", result);
     
-    result = readOutput(new URL(baseUrl, "/jmx?qry=java.lang:type=Memory"));
+    result = readOutput(Urls.create(baseUrl, "/jmx?qry=java.lang:type=Memory", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertReFind("\"name\"\\s*:\\s*\"java.lang:type=Memory\"", result);
     assertReFind("\"modelerType\"", result);
     
-    result = readOutput(new URL(baseUrl, "/jmx"));
+    result = readOutput(Urls.create(baseUrl, "/jmx", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertReFind("\"name\"\\s*:\\s*\"java.lang:type=Memory\"", result);
     
     // test to get an attribute of a mbean
-    result = readOutput(new URL(baseUrl, 
-        "/jmx?get=java.lang:type=Memory::HeapMemoryUsage"));
+    result = readOutput(Urls.create(baseUrl, "/jmx?get=java.lang:type=Memory::HeapMemoryUsage", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertReFind("\"name\"\\s*:\\s*\"java.lang:type=Memory\"", result);
     assertReFind("\"committed\"\\s*:", result);
     
     // negative test to get an attribute of a mbean
-    result = readOutput(new URL(baseUrl, 
-        "/jmx?get=java.lang:type=Memory::"));
+    result = readOutput(Urls.create(baseUrl, "/jmx?get=java.lang:type=Memory::", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertReFind("\"ERROR\"", result);
 
     // test to CORS headers
     HttpURLConnection conn = (HttpURLConnection)
-        new URL(baseUrl, "/jmx?qry=java.lang:type=Memory").openConnection();
+        Urls.create(baseUrl, "/jmx?qry=java.lang:type=Memory", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
     assertEquals("GET", conn.getHeaderField(ACCESS_CONTROL_ALLOW_METHODS));
     assertNotNull(conn.getHeaderField(ACCESS_CONTROL_ALLOW_ORIGIN));
   }
 
   @Test
   public void testTraceRequest() throws IOException {
-    URL url = new URL(baseUrl, "/jmx");
+    URL url = Urls.create(baseUrl, "/jmx", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     conn.setRequestMethod("TRACE");
 

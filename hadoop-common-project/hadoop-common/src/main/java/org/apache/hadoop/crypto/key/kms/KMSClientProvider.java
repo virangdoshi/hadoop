@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.crypto.key.kms;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.conf.Configuration;
@@ -318,7 +320,7 @@ public class KMSClientProvider extends KeyProvider implements CryptoExtension,
     public KeyProvider createProvider(URI providerUri, Configuration conf)
         throws IOException {
       if (SCHEME_NAME.equals(providerUri.getScheme())) {
-        URL origUrl = new URL(extractKMSPath(providerUri).toString());
+        URL origUrl = Urls.create(extractKMSPath(providerUri).toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         String authority = origUrl.getAuthority();
         // check for ';' which delimits the backup hosts
         if (Strings.isNullOrEmpty(authority)) {
@@ -486,11 +488,11 @@ public class KMSClientProvider extends KeyProvider implements CryptoExtension,
   }
 
   private static URL createServiceURL(Path path) throws IOException {
-    String str = new URL(path.toString()).toExternalForm();
+    String str = Urls.create(path.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).toExternalForm();
     if (str.endsWith("/")) {
       str = str.substring(0, str.length() - 1);
     }
-    return new URL(str + KMSRESTConstants.SERVICE_VERSION + "/");
+    return Urls.create(str + KMSRESTConstants.SERVICE_VERSION + "/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   private URL createURL(String collection, String resource, String subResource,

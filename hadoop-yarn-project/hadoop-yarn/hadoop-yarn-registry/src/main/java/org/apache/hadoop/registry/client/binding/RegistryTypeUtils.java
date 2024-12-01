@@ -19,6 +19,8 @@
 package org.apache.hadoop.registry.client.binding;
 
 import com.google.common.base.Preconditions;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.registry.client.exceptions.InvalidRecordException;
@@ -234,7 +236,7 @@ public class RegistryTypeUtils {
     List<String> addresses = retrieveAddressesUriType(epr);
     List<URL> results = new ArrayList<URL>(addresses.size());
     for (String address : addresses) {
-      results.add(new URL(address));
+      results.add(Urls.create(address, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     }
     return results;
   }

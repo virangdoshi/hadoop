@@ -18,6 +18,8 @@
 package org.apache.hadoop.crypto.key.kms.server;
 
 import com.google.common.base.Preconditions;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -73,9 +75,9 @@ public class MiniKMS {
         == SslSelectChannelConnectorSecure.class;
     try {
       String scheme = (ssl) ? "https" : "http";
-      return new URL(scheme + "://" +
+      return Urls.create(scheme + "://" +
           server.getConnectors()[0].getHost() + ":" +
-          server.getConnectors()[0].getLocalPort());
+          server.getConnectors()[0].getLocalPort(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     } catch (MalformedURLException ex) {
       throw new RuntimeException("It should never happen, " + ex.getMessage(),
           ex);
@@ -211,7 +213,7 @@ public class MiniKMS {
     }
     jetty.addHandler(context);
     jetty.start();
-    kmsURL = new URL(getJettyURL(jetty), "kms");
+    kmsURL = Urls.create(getJettyURL(jetty), "kms", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   public URL getKMSUrl() {

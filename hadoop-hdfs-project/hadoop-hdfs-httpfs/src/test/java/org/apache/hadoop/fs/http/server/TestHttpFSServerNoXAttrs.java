@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.fs.http.server;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
@@ -174,7 +176,7 @@ public class TestHttpFSServerNoXAttrs extends HTestCase {
     String pathOps = MessageFormat.format(
             "/webhdfs/v1/{0}?user.name={1}&op={2}",
             filename, user, command);
-    URL url = new URL(TestJettyHelper.getJettyURL(), pathOps);
+    URL url = Urls.create(TestJettyHelper.getJettyURL(), pathOps, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     conn.connect();
     int resp = conn.getResponseCode();
@@ -204,7 +206,7 @@ public class TestHttpFSServerNoXAttrs extends HTestCase {
             "/webhdfs/v1/{0}?user.name={1}{2}{3}&op={4}",
             filename, user, (params == null) ? "" : "&",
             (params == null) ? "" : params, command);
-    URL url = new URL(TestJettyHelper.getJettyURL(), pathOps);
+    URL url = Urls.create(TestJettyHelper.getJettyURL(), pathOps, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     conn.setRequestMethod("PUT");
     conn.connect();

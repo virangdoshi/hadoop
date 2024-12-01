@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.tools.offlineImageViewer;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
@@ -130,8 +132,8 @@ public class TestOfflineImageViewerForContentSummary {
         NetUtils.createSocketAddr("localhost:0"))) {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
-      URL url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/parentDir/childDir2?op=GETCONTENTSUMMARY");
+      URL url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/parentDir/childDir2?op=GETCONTENTSUMMARY", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -152,8 +154,8 @@ public class TestOfflineImageViewerForContentSummary {
         NetUtils.createSocketAddr("localhost:0"))) {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
-      URL url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/parentDir/?op=GETCONTENTSUMMARY");
+      URL url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/parentDir/?op=GETCONTENTSUMMARY", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -173,8 +175,8 @@ public class TestOfflineImageViewerForContentSummary {
         NetUtils.createSocketAddr("localhost:0"))) {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
-      URL url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/parentDir/file1?op=GETCONTENTSUMMARY");
+      URL url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/parentDir/file1?op=GETCONTENTSUMMARY", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -236,8 +238,8 @@ public class TestOfflineImageViewerForContentSummary {
         NetUtils.createSocketAddr("localhost:0"))) {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
-      URL url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/dir123/?op=GETCONTENTSUMMARY");
+      URL url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/dir123/?op=GETCONTENTSUMMARY", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();

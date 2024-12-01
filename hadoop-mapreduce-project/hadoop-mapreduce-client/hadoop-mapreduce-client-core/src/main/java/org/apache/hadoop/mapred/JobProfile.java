@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -142,7 +144,7 @@ public class JobProfile implements Writable {
    */
   public URL getURL() {
     try {
-      return new URL(url);
+      return Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     } catch (IOException ie) {
       return null;
     }

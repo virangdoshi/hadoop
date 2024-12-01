@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.fs.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -54,7 +56,7 @@ public class TestHttpFileSystem {
           server.getPort()));
       FileSystem fs = FileSystem.get(uri, conf);
       try (InputStream is = fs.open(
-          new Path(new URL(uri.toURL(), "/foo").toURI()),
+          new Path(Urls.create(uri.toURL(), "/foo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).toURI()),
           4096)) {
         byte[] buf = new byte[data.length()];
         IOUtils.readFully(is, buf, 0, buf.length);

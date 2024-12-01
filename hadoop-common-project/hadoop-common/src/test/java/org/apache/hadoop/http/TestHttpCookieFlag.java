@@ -13,6 +13,8 @@
  */
 package org.apache.hadoop.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.junit.Assert;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileUtil;
@@ -113,10 +115,9 @@ public class TestHttpCookieFlag {
 
   @Test
   public void testHttpCookie() throws IOException {
-    URL base = new URL("http://" + NetUtils.getHostPortString(server
-            .getConnectorAddress(0)));
-    HttpURLConnection conn = (HttpURLConnection) new URL(base,
-            "/echo").openConnection();
+    URL base = Urls.create("http://" + NetUtils.getHostPortString(server
+            .getConnectorAddress(0)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+    HttpURLConnection conn = (HttpURLConnection) Urls.create(base, "/echo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
 
     String header = conn.getHeaderField("Set-Cookie");
     List<HttpCookie> cookies = HttpCookie.parse(header);
@@ -127,10 +128,9 @@ public class TestHttpCookieFlag {
 
   @Test
   public void testHttpsCookie() throws IOException, GeneralSecurityException {
-    URL base = new URL("https://" + NetUtils.getHostPortString(server
-            .getConnectorAddress(1)));
-    HttpsURLConnection conn = (HttpsURLConnection) new URL(base,
-            "/echo").openConnection();
+    URL base = Urls.create("https://" + NetUtils.getHostPortString(server
+            .getConnectorAddress(1)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+    HttpsURLConnection conn = (HttpsURLConnection) Urls.create(base, "/echo", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
     conn.setSSLSocketFactory(clientSslFactory.createSSLSocketFactory());
 
     String header = conn.getHeaderField("Set-Cookie");

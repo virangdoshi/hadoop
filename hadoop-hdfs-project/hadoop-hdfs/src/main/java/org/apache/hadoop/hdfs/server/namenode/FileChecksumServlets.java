@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -76,10 +78,9 @@ public class FileChecksumServlets {
       String addr = nn.getNameNodeAddressHostPortString();
       String addrParam = JspHelper.getUrlParam(JspHelper.NAMENODE_ADDRESS, addr);
 
-      return new URL(scheme, hostname, port, 
-          "/getFileChecksum" + encodedPath + '?' +
+      return Urls.create(scheme, hostname, port, "/getFileChecksum" + encodedPath + '?' +
           "ugi=" + ServletUtil.encodeQueryValue(ugi.getShortUserName()) + 
-          dtParam + addrParam);
+          dtParam + addrParam, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
 
     @Override

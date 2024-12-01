@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.qjournal.server;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -175,7 +177,7 @@ public class TestJournalNode {
     String urlRoot = jn.getHttpServerURI();
     
     // Check default servlets.
-    String pageContents = DFSTestUtil.urlGet(new URL(urlRoot + "/jmx"));
+    String pageContents = DFSTestUtil.urlGet(Urls.create(urlRoot + "/jmx", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertTrue("Bad contents: " + pageContents,
         pageContents.contains(
             "Hadoop:service=JournalNode,name=JvmMetrics"));
@@ -192,8 +194,8 @@ public class TestJournalNode {
 
     // Attempt to retrieve via HTTP, ensure we get the data back
     // including the header we expected
-    byte[] retrievedViaHttp = DFSTestUtil.urlGetBytes(new URL(urlRoot +
-        "/getJournal?segmentTxId=1&jid=" + journalId));
+    byte[] retrievedViaHttp = DFSTestUtil.urlGetBytes(Urls.create(urlRoot +
+        "/getJournal?segmentTxId=1&jid=" + journalId, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     byte[] expected = Bytes.concat(
             Ints.toByteArray(HdfsServerConstants.NAMENODE_LAYOUT_VERSION),
             (new byte[] { 0, 0, 0, 0 }), // layout flags section
@@ -203,7 +205,7 @@ public class TestJournalNode {
     
     // Attempt to fetch a non-existent file, check that we get an
     // error status code
-    URL badUrl = new URL(urlRoot + "/getJournal?segmentTxId=12345&jid=" + journalId);
+    URL badUrl = Urls.create(urlRoot + "/getJournal?segmentTxId=12345&jid=" + journalId, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection connection = (HttpURLConnection)badUrl.openConnection();
     try {
       assertEquals(404, connection.getResponseCode());

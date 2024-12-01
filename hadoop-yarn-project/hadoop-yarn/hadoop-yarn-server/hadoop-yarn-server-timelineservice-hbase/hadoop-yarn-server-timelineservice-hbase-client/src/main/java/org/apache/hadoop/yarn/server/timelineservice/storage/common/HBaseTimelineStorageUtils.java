@@ -17,6 +17,8 @@
 
 package org.apache.hadoop.yarn.server.timelineservice.storage.common;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -69,7 +71,7 @@ public final class HBaseTimelineStorageUtils {
       // create a clone so that we don't mess with out input one
       hbaseConf = new Configuration(conf);
       Configuration plainHBaseConf = new Configuration(false);
-      URL hbaseSiteXML = new URL(timelineServiceHBaseConfFileURL);
+      URL hbaseSiteXML = Urls.create(timelineServiceHBaseConfFileURL, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       plainHBaseConf.addResource(hbaseSiteXML);
       HBaseConfiguration.merge(hbaseConf, plainHBaseConf);
     } else {

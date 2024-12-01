@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -107,7 +109,7 @@ public class StreamUtil {
 
   static String qualifyHost(String url) {
     try {
-      return qualifyHost(new URL(url)).toString();
+      return qualifyHost(Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)).toString();
     } catch (IOException io) {
       return url;
     }
@@ -117,7 +119,7 @@ public class StreamUtil {
     try {
       InetAddress a = InetAddress.getByName(url.getHost());
       String qualHost = a.getCanonicalHostName();
-      URL q = new URL(url.getProtocol(), qualHost, url.getPort(), url.getFile());
+      URL q = Urls.create(url.getProtocol(), qualHost, url.getPort(), url.getFile(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       return q;
     } catch (IOException io) {
       return url;

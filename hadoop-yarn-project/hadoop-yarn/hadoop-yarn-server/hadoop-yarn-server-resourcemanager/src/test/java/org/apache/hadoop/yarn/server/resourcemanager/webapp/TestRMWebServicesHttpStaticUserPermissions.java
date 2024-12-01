@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.yarn.server.resourcemanager.webapp;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -167,7 +169,7 @@ public class TestRMWebServicesHttpStaticUserPermissions {
         "PUT", killAppRequestBody));
 
     for (Map.Entry<String, Helper> entry : urlRequestMap.entrySet()) {
-      URL reqURL = new URL(entry.getKey());
+      URL reqURL = Urls.create(entry.getKey(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       conn = (HttpURLConnection) reqURL.openConnection();
       String method = entry.getValue().method;
       String body = entry.getValue().requestBody;

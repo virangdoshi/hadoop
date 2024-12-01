@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.URL;
@@ -119,7 +121,7 @@ public class TestNameNodeHttpServer {
     if (addr == null)
       return false;
     try {
-      URL url = new URL(scheme + "://" + NetUtils.getHostPortString(addr));
+      URL url = Urls.create(scheme + "://" + NetUtils.getHostPortString(addr), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       URLConnection conn = connectionFactory.openConnection(url);
       conn.connect();
       conn.getContent();

@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.fs.http.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -526,7 +528,7 @@ public class HttpFSFileSystem extends FileSystem
         exceptionAlreadyHandled = true;
         String location = conn.getHeaderField("Location");
         if (location != null) {
-          conn = getConnection(new URL(location), method);
+          conn = getConnection(Urls.create(location, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), method);
           conn.setRequestProperty("Content-Type", UPLOAD_CONTENT_TYPE);
           try {
             OutputStream os = new BufferedOutputStream(conn.getOutputStream(), bufferSize);

@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.hdfs.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.hdfs.client.HdfsClientConfigKeys.DFS_WEBHDFS_REST_CSRF_CUSTOM_HEADER_DEFAULT;
 import static org.apache.hadoop.hdfs.client.HdfsClientConfigKeys.DFS_WEBHDFS_REST_CSRF_CUSTOM_HEADER_KEY;
 import static org.apache.hadoop.hdfs.client.HdfsClientConfigKeys.DFS_WEBHDFS_REST_CSRF_ENABLED_DEFAULT;
@@ -578,8 +580,7 @@ public class WebHdfsFileSystem extends FileSystem
    */
   private URL getNamenodeURL(String path, String query) throws IOException {
     InetSocketAddress nnAddr = getCurrentNNAddr();
-    final URL url = new URL(getTransportScheme(), nnAddr.getHostName(),
-        nnAddr.getPort(), path + '?' + query);
+    final URL url = Urls.create(getTransportScheme(), nnAddr.getHostName(), nnAddr.getPort(), path + '?' + query, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     LOG.trace("url={}", url);
     return url;
   }
@@ -711,7 +712,7 @@ public class WebHdfsFileSystem extends FileSystem
         }
         try {
           validateResponse(redirectOp, conn, false);
-          url = new URL(conn.getHeaderField("Location"));
+          url = Urls.create(conn.getHeaderField("Location"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
           redirectHost = url.getHost() + ":" + url.getPort();
         } finally {
           // TODO: consider not calling conn.disconnect() to allow connection reuse
@@ -1535,7 +1536,7 @@ public class WebHdfsFileSystem extends FileSystem
     protected HttpURLConnection connect(final long offset,
         final boolean resolved) throws IOException {
       final URL offsetUrl = offset == 0L? url
-          : new URL(url + "&" + new OffsetParam(offset));
+          : Urls.create(url + "&" + new OffsetParam(offset), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       return new URLRunner(GetOpParam.Op.OPEN, offsetUrl, resolved,
           true).run();
     }
@@ -1571,7 +1572,7 @@ public class WebHdfsFileSystem extends FileSystem
     query = b == null? "": b.toString();
 
     final String urlStr = url.toString();
-    return new URL(urlStr.substring(0, urlStr.indexOf('?')) + query);
+    return Urls.create(urlStr.substring(0, urlStr.indexOf('?')) + query, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   static class OffsetUrlInputStream extends ByteRangeInputStream {
@@ -2092,7 +2093,7 @@ public class WebHdfsFileSystem extends FileSystem
       if (location != null) {
         // This saves the location for datanode where redirect was issued.
         // Need to remove offset because seek can be called after open.
-        resolvedUrl = removeOffsetParam(new URL(location));
+        resolvedUrl = removeOffsetParam(Urls.create(location, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
       } else {
         // This is cached for proxies like httpfsfilesystem.
         cachedConnection = conn;
@@ -2129,7 +2130,7 @@ public class WebHdfsFileSystem extends FileSystem
       // and fall through to establish the connection using ReadRunner.
       if (runnerState == RunnerState.SEEK) {
         try {
-          final URL rurl = new URL(resolvedUrl + "&" + new OffsetParam(pos));
+          final URL rurl = Urls.create(resolvedUrl + "&" + new OffsetParam(pos), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
           cachedConnection = new URLRunner(GetOpParam.Op.OPEN, rurl, true,
               false).run();
         } catch (IOException ioe) {

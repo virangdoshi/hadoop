@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.mapreduce.v2.app.webapp;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.mapreduce.v2.app.webapp.AMParams.APP_ID;
 import static org.junit.Assert.assertEquals;
 
@@ -187,7 +189,7 @@ public class TestAMWebApp {
         NetUtils.getHostPortString(((MRClientService) app.getClientService())
           .getWebApp().getListenerAddress());
     // http:// should be accessible
-    URL httpUrl = new URL("http://" + hostPort);
+    URL httpUrl = Urls.create("http://" + hostPort, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
     InputStream in = conn.getInputStream();
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -195,7 +197,7 @@ public class TestAMWebApp {
     Assert.assertTrue(out.toString().contains("MapReduce Application"));
 
     // https:// is not accessible.
-    URL httpsUrl = new URL("https://" + hostPort);
+    URL httpsUrl = Urls.create("https://" + hostPort, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     try {
       HttpURLConnection httpsConn =
           (HttpURLConnection) httpsUrl.openConnection();
@@ -242,7 +244,7 @@ public class TestAMWebApp {
       String hostPort =
           NetUtils.getHostPortString(((MRClientService) app.getClientService())
             .getWebApp().getListenerAddress());
-      URL httpUrl = new URL("http://" + hostPort + "/mapreduce");
+      URL httpUrl = Urls.create("http://" + hostPort + "/mapreduce", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
       conn.setInstanceFollowRedirects(false);

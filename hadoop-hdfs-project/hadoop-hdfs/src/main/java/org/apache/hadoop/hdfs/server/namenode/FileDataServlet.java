@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.net.URL;
 import java.security.PrivilegedExceptionAction;
@@ -76,10 +78,9 @@ public class FileDataServlet extends DfsServlet {
     String addr = nn.getNameNodeAddressHostPortString();
     String addrParam = JspHelper.getUrlParam(JspHelper.NAMENODE_ADDRESS, addr);
     
-    return new URL(scheme, hostname, port,
-        "/streamFile" + encodedPath + '?' +
+    return Urls.create(scheme, hostname, port, "/streamFile" + encodedPath + '?' +
         "ugi=" + ServletUtil.encodeQueryValue(ugi.getShortUserName()) +
-        dtParam + addrParam);
+        dtParam + addrParam, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   /** Select a datanode to service this request.

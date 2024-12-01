@@ -19,6 +19,8 @@
 package org.apache.hadoop.yarn.server.webproxy.amfilter;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.classification.InterfaceAudience.Public;
 import org.apache.hadoop.yarn.server.webproxy.ProxyUtils;
 import org.apache.hadoop.yarn.server.webproxy.WebAppProxyServlet;
@@ -85,7 +87,7 @@ public class AmIpFilter implements Filter {
       proxyUriBases = new HashMap<>(proxyUriBasesArr.length);
       for (String proxyUriBase : proxyUriBasesArr) {
         try {
-          URL url = new URL(proxyUriBase);
+          URL url = Urls.create(proxyUriBase, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
           proxyUriBases.put(url.getHost() + ":" + url.getPort(), proxyUriBase);
         } catch(MalformedURLException e) {
           LOG.warn("{} does not appear to be a valid URL", proxyUriBase, e);
@@ -218,7 +220,7 @@ public class AmIpFilter implements Filter {
   public boolean isValidUrl(String url) {
     boolean isValid = false;
     try {
-      HttpURLConnection conn = (HttpURLConnection) new URL(url)
+      HttpURLConnection conn = (HttpURLConnection) Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
           .openConnection();
       conn.connect();
       isValid = conn.getResponseCode() == HttpURLConnection.HTTP_OK;

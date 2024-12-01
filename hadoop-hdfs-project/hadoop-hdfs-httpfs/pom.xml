@@ -214,6 +214,10 @@
       <artifactId>bcprov-jdk16</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.github.pixee</groupId>
+      <artifactId>java-security-toolkit</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -358,9 +362,7 @@
             </goals>
             <configuration>
               <target>
-                <xslt in="${basedir}/src/main/resources/httpfs-default.xml"
-                      out="${project.build.directory}/site/httpfs-default.html"
-                      style="${basedir}/src/site/configuration.xsl"/>
+                <xslt in="${basedir}/src/main/resources/httpfs-default.xml" out="${project.build.directory}/site/httpfs-default.html" style="${basedir}/src/site/configuration.xsl"/>
               </target>
             </configuration>
           </execution>
@@ -498,9 +500,7 @@
                 <configuration>
                   <target>
                     <mkdir dir="downloads"/>
-                    <get
-                        src="${tomcat.download.url}"
-                        dest="downloads/apache-tomcat-${tomcat.version}.tar.gz" verbose="true" skipexisting="true"/>
+                    <get src="${tomcat.download.url}" dest="downloads/apache-tomcat-${tomcat.version}.tar.gz" verbose="true" skipexisting="true"/>
                     <delete dir="${project.build.directory}/tomcat.exp"/>
                     <mkdir dir="${project.build.directory}/tomcat.exp"/>
 
@@ -513,23 +513,18 @@
                       <arg line="./tomcat-untar.sh"/>
                     </exec>
 
-                    <move file="${project.build.directory}/tomcat.exp/apache-tomcat-${tomcat.version}"
-                          tofile="${httpfs.tomcat.dist.dir}"/>
+                    <move file="${project.build.directory}/tomcat.exp/apache-tomcat-${tomcat.version}" tofile="${httpfs.tomcat.dist.dir}"/>
                     <delete dir="${project.build.directory}/tomcat.exp"/>
                     <delete dir="${httpfs.tomcat.dist.dir}/webapps"/>
                     <mkdir dir="${httpfs.tomcat.dist.dir}/webapps"/>
                     <delete file="${httpfs.tomcat.dist.dir}/conf/catalina-default.properties"/>
-                    <copy file="${basedir}/src/main/tomcat/catalina-default.properties"
-                          toDir="${httpfs.tomcat.dist.dir}/conf"/>
+                    <copy file="${basedir}/src/main/tomcat/catalina-default.properties" toDir="${httpfs.tomcat.dist.dir}/conf"/>
                     <delete file="${httpfs.tomcat.dist.dir}/conf/server.xml"/>
-                    <copy file="${basedir}/src/main/tomcat/server.xml"
-                          toDir="${httpfs.tomcat.dist.dir}/conf"/>
+                    <copy file="${basedir}/src/main/tomcat/server.xml" toDir="${httpfs.tomcat.dist.dir}/conf"/>
                     <delete file="${httpfs.tomcat.dist.dir}/conf/ssl-server.xml"/>
-                    <copy file="${basedir}/src/main/tomcat/ssl-server.xml"
-                          toDir="${httpfs.tomcat.dist.dir}/conf"/>
+                    <copy file="${basedir}/src/main/tomcat/ssl-server.xml" toDir="${httpfs.tomcat.dist.dir}/conf"/>
                     <delete file="${httpfs.tomcat.dist.dir}/conf/logging.properties"/>
-                    <copy file="${basedir}/src/main/tomcat/logging.properties"
-                          toDir="${httpfs.tomcat.dist.dir}/conf"/>
+                    <copy file="${basedir}/src/main/tomcat/logging.properties" toDir="${httpfs.tomcat.dist.dir}/conf"/>
                     <copy toDir="${httpfs.tomcat.dist.dir}/webapps/ROOT">
                       <fileset dir="${basedir}/src/main/tomcat/ROOT"/>
                     </copy>
@@ -550,7 +545,7 @@
                     <!-- Using Unix script to preserve symlinks -->
                     <echo file="${project.build.directory}/dist-maketar.sh">
                       cd "${project.build.directory}"
-                      tar cf - ${project.artifactId}-${project.version} | gzip > ${project.artifactId}-${project.version}.tar.gz
+                      tar cf - ${project.artifactId}-${project.version} | gzip &gt; ${project.artifactId}-${project.version}.tar.gz
                     </echo>
                     <exec executable="${shell-executable}" dir="${project.build.directory}" failonerror="true">
                       <arg line="./dist-maketar.sh"/>

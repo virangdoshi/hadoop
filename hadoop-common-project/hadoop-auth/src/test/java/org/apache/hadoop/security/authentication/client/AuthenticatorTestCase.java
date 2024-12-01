@@ -13,6 +13,8 @@
  */
 package org.apache.hadoop.security.authentication.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.startup.Tomcat;
@@ -206,7 +208,7 @@ public class AuthenticatorTestCase {
   protected void _testAuthentication(Authenticator authenticator, boolean doPost) throws Exception {
     start();
     try {
-      URL url = new URL(getBaseURL());
+      URL url = Urls.create(getBaseURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       AuthenticatedURL.Token token = new AuthenticatedURL.Token();
       Assert.assertFalse(token.isSet());
       TestConnectionConfigurator connConf = new TestConnectionConfigurator();

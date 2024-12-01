@@ -198,6 +198,10 @@
       <artifactId>bcprov-jdk16</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.github.pixee</groupId>
+      <artifactId>java-security-toolkit</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -372,10 +376,7 @@
                 <configuration>
                   <target>
                     <mkdir dir="downloads"/>
-                    <get
-                      src="${tomcat.download.url}"
-                      dest="downloads/apache-tomcat-${tomcat.version}.tar.gz"
-                      verbose="true" skipexisting="true"/>
+                    <get src="${tomcat.download.url}" dest="downloads/apache-tomcat-${tomcat.version}.tar.gz" verbose="true" skipexisting="true"/>
                     <delete dir="${project.build.directory}/tomcat.exp"/>
                     <mkdir dir="${project.build.directory}/tomcat.exp"/>
 
@@ -384,8 +385,7 @@
                       cd "${project.build.directory}/tomcat.exp"
                       gzip -cd ../../downloads/apache-tomcat-${tomcat.version}.tar.gz | tar xf -
                     </echo>
-                    <exec executable="${shell-executable}" dir="${project.build.directory}"
-                          failonerror="true">
+                    <exec executable="${shell-executable}" dir="${project.build.directory}" failonerror="true">
                       <arg line="./tomcat-untar.sh"/>
                     </exec>
 
@@ -428,10 +428,9 @@
                     <!-- Using Unix script to preserve symlinks -->
                     <echo file="${project.build.directory}/dist-maketar.sh">
                       cd "${project.build.directory}"
-                      tar cf - ${project.artifactId}-${project.version} | gzip > ${project.artifactId}-${project.version}.tar.gz
+                      tar cf - ${project.artifactId}-${project.version} | gzip &gt; ${project.artifactId}-${project.version}.tar.gz
                     </echo>
-                    <exec executable="${shell-executable}" dir="${project.build.directory}"
-                          failonerror="true">
+                    <exec executable="${shell-executable}" dir="${project.build.directory}" failonerror="true">
                       <arg line="./dist-maketar.sh"/>
                     </exec>
                   </target>

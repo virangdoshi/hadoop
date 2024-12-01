@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.crypto.key.kms.server;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.crypto.key.kms.KMSRESTConstants;
@@ -76,12 +78,12 @@ public class TestKMSWithZK {
           .setKmsConfDir(testDir).setLog4jConfFile("log4j.properties").build();
       kms2.start();
 
-      final URL url1 = new URL(kms1.getKMSUrl().toExternalForm() +
+      final URL url1 = Urls.create(kms1.getKMSUrl().toExternalForm() +
           KMSRESTConstants.SERVICE_VERSION +  "/" +
-          KMSRESTConstants.KEYS_NAMES_RESOURCE);
-      final URL url2 = new URL(kms2.getKMSUrl().toExternalForm() +
+          KMSRESTConstants.KEYS_NAMES_RESOURCE, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+      final URL url2 = Urls.create(kms2.getKMSUrl().toExternalForm() +
           KMSRESTConstants.SERVICE_VERSION + "/" +
-          KMSRESTConstants.KEYS_NAMES_RESOURCE);
+          KMSRESTConstants.KEYS_NAMES_RESOURCE, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
       final DelegationTokenAuthenticatedURL.Token token =
           new DelegationTokenAuthenticatedURL.Token();

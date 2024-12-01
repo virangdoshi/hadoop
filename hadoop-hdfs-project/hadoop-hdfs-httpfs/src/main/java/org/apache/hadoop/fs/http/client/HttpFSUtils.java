@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.fs.http.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.fs.Path;
 import org.json.simple.parser.JSONParser;
@@ -113,7 +115,7 @@ public class HttpFSUtils {
         }
       }
     }
-    return new URL(sb.toString());
+    return Urls.create(sb.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   /**

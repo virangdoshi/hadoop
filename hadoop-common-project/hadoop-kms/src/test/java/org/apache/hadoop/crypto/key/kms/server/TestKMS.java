@@ -18,6 +18,8 @@
 package org.apache.hadoop.crypto.key.kms.server;
 
 import com.google.common.base.Supplier;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.crypto.key.KeyProviderFactory;
@@ -1650,7 +1652,7 @@ public class TestKMS {
       return;
     }
 
-    URL url = new URL("http://localhost:" + port + "/kms");
+    URL url = Urls.create("http://localhost:" + port + "/kms", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     URI uri = createKMSUri(url);
 
     boolean caughtTimeout = false;
@@ -2399,9 +2401,8 @@ public class TestKMS {
     runServer(null, null, confDir, new KMSCallable<Void>() {
       @Override
       public Void call() throws Exception {
-        final URL jmxUrl = new URL(
-            getKMSUrl() + "/jmx?user.name=whatever&qry=Hadoop:service="
-                + processName + ",name=JvmMetrics");
+        final URL jmxUrl = Urls.create(getKMSUrl() + "/jmx?user.name=whatever&qry=Hadoop:service="
+                + processName + ",name=JvmMetrics", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         LOG.info("Requesting jmx from " + jmxUrl);
         final StringBuilder sb = new StringBuilder();
         final InputStream in = jmxUrl.openConnection().getInputStream();

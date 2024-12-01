@@ -13,6 +13,8 @@
  */
 package org.apache.hadoop.security.authentication.examples;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.security.authentication.client.AuthenticatedURL;
 
 import java.io.BufferedReader;
@@ -33,7 +35,7 @@ public class WhoClient {
         System.exit(-1);
       }
       AuthenticatedURL.Token token = new AuthenticatedURL.Token();
-      URL url = new URL(args[0]);
+      URL url = Urls.create(args[0], Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = new AuthenticatedURL().openConnection(url, token);
       System.out.println();
       System.out.println("Token value: " + token);

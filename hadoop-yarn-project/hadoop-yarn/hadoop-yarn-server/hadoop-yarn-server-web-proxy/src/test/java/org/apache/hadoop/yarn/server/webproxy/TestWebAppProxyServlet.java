@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.yarn.server.webproxy;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -152,14 +154,14 @@ public class TestWebAppProxyServlet {
     // wrong url
     try {
       // wrong url without app ID
-      URL emptyUrl = new URL("http://localhost:" + proxyPort + "/proxy");
+      URL emptyUrl = Urls.create("http://localhost:" + proxyPort + "/proxy", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection emptyProxyConn = (HttpURLConnection) emptyUrl
           .openConnection();
       emptyProxyConn.connect();
       assertEquals(HttpURLConnection.HTTP_NOT_FOUND, emptyProxyConn.getResponseCode());
 
       // wrong url. Set wrong app ID
-      URL wrongUrl = new URL("http://localhost:" + proxyPort + "/proxy/app");
+      URL wrongUrl = Urls.create("http://localhost:" + proxyPort + "/proxy/app", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection proxyConn = (HttpURLConnection) wrongUrl
           .openConnection();
 
@@ -168,7 +170,7 @@ public class TestWebAppProxyServlet {
           proxyConn.getResponseCode());
 
       // set true Application ID in url
-      URL url = new URL("http://localhost:" + proxyPort + "/proxy/application_00_0");
+      URL url = Urls.create("http://localhost:" + proxyPort + "/proxy/application_00_0", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       proxyConn = (HttpURLConnection) url.openConnection();
       // set cookie
       proxyConn.setRequestProperty("Cookie", "checked_application_0_0000=true");
@@ -178,8 +180,8 @@ public class TestWebAppProxyServlet {
           proxyConn, "checked_application_0_0000", "true"));
 
       // test that redirection is squashed correctly
-      URL redirectUrl = new URL("http://localhost:" + proxyPort
-          + "/proxy/redirect/application_00_0");
+      URL redirectUrl = Urls.create("http://localhost:" + proxyPort
+          + "/proxy/redirect/application_00_0", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       proxyConn = (HttpURLConnection) redirectUrl.openConnection();
       proxyConn.setInstanceFollowRedirects(false);
       proxyConn.connect();
@@ -235,8 +237,8 @@ public class TestWebAppProxyServlet {
       // test user-provided path and query parameter can be appended to the
       // original tracking url
       appReportFetcher.answer = 5;
-      URL clientUrl = new URL("http://localhost:" + proxyPort
-        + "/proxy/application_00_0/test/tez?x=y&h=p");
+      URL clientUrl = Urls.create("http://localhost:" + proxyPort
+        + "/proxy/application_00_0/test/tez?x=y&h=p", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       proxyConn = (HttpURLConnection) clientUrl.openConnection();
       proxyConn.connect();
       LOG.info("" + proxyConn.getURL());
@@ -266,8 +268,8 @@ public class TestWebAppProxyServlet {
         false);
     ApplicationId app = ApplicationId.newInstance(0, 0);
     appReportFetcher.answer = 6;
-    URL url = new URL("http://localhost:" + proxyPort +
-        "/proxy/" + app.toString());
+    URL url = Urls.create("http://localhost:" + proxyPort +
+        "/proxy/" + app.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection proxyConn = (HttpURLConnection) url.openConnection();
     proxyConn.connect();
     try {
@@ -318,7 +320,7 @@ public class TestWebAppProxyServlet {
     int proxyPort = proxy.proxy.proxyServer.getConnectorAddress(0).getPort();
 
     try {
-      URL url = new URL("http://localhost:" + proxyPort + "/proxy/application_00_1");
+      URL url = Urls.create("http://localhost:" + proxyPort + "/proxy/application_00_1", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection proxyConn = (HttpURLConnection) url.openConnection();
       // set headers
       proxyConn.addRequestProperty("Origin", "http://www.someurl.com");

@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.yarn.server.applicationhistoryservice;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -200,8 +202,8 @@ public class TestApplicationHistoryServer {
           + UI1, "./");
       historyServer.init(config);
       historyServer.start();
-      URL url = new URL("http://localhost:" + historyServer.getPort() + "/"
-          + UI1 + "/pom.xml");
+      URL url = Urls.create("http://localhost:" + historyServer.getPort() + "/"
+          + UI1 + "/pom.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.connect();
       assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());

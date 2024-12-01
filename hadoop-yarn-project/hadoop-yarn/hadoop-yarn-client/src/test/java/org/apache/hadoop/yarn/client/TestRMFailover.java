@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.yarn.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -229,7 +231,7 @@ public class TestRMFailover extends ClientBaseWithFixes {
 
       // send httpRequest with fakeApplicationId
       // expect to get "Not Found" response and 404 response code
-      URL wrongUrl = new URL("http://0.0.0.0:9099/proxy/" + fakeAppId);
+      URL wrongUrl = Urls.create("http://0.0.0.0:9099/proxy/" + fakeAppId, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection proxyConn = (HttpURLConnection) wrongUrl
           .openConnection();
 
@@ -256,7 +258,7 @@ public class TestRMFailover extends ClientBaseWithFixes {
 
     // send httpRequest with fakeApplicationId
     // expect to get "Not Found" response and 404 response code
-    URL wrongUrl = new URL("http://0.0.0.0:18088/proxy/" + fakeAppId);
+    URL wrongUrl = Urls.create("http://0.0.0.0:18088/proxy/" + fakeAppId, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection proxyConn = (HttpURLConnection) wrongUrl
         .openConnection();
 
@@ -344,7 +346,7 @@ public class TestRMFailover extends ClientBaseWithFixes {
   static String getRedirectURL(String url) {
     String redirectUrl = null;
     try {
-      HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+      HttpURLConnection conn = (HttpURLConnection) Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
       // do not automatically follow the redirection
       // otherwise we get too many redirections exception
       conn.setInstanceFollowRedirects(false);
@@ -360,7 +362,7 @@ public class TestRMFailover extends ClientBaseWithFixes {
   static String getRefreshURL(String url) {
     String redirectUrl = null;
     try {
-      HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+      HttpURLConnection conn = (HttpURLConnection) Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
       // do not automatically follow the redirection
       // otherwise we get too many redirections exception
       conn.setInstanceFollowRedirects(false);

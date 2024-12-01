@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.mapreduce.task.reduce;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -684,7 +686,7 @@ class Fetcher<K,V> extends Thread {
     }
    
     LOG.debug("MapOutput URL for " + host + " -> " + url.toString());
-    return new URL(url.toString());
+    return Urls.create(url.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
   
   /** 
