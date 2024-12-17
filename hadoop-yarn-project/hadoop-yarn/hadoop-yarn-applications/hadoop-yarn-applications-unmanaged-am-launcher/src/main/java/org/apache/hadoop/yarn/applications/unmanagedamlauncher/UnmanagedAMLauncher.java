@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Map;
@@ -184,8 +185,7 @@ public class UnmanagedAMLauncher {
     // AMRMToken down to the real AM which eventually sets the correct
     // service-address.
     credentials.addToken(token.getService(), token);
-    File tokenFile = File.createTempFile("unmanagedAMRMToken","", 
-        new File(System.getProperty("user.dir")));
+    File tokenFile = Files.createTempFile(new File(System.getProperty("user.dir")).toPath(), "unmanagedAMRMToken", "").toFile();
     try {
       FileUtil.chmod(tokenFile.getAbsolutePath(), "600");
     } catch (InterruptedException ex) {

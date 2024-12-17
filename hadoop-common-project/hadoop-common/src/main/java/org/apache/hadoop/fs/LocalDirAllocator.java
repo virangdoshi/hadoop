@@ -19,6 +19,7 @@
 package org.apache.hadoop.fs;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -463,7 +464,7 @@ public class LocalDirAllocator {
       String prefix = path.getName();
 
       // create a temp file on this directory
-      File result = File.createTempFile(prefix, null, dir);
+      File result = Files.createTempFile(dir.toPath(), prefix, null).toFile();
       result.deleteOnExit();
       return result;
     }

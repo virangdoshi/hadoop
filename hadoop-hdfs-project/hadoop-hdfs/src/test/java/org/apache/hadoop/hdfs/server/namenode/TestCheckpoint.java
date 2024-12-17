@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import java.nio.file.Files;
 import static org.apache.hadoop.hdfs.server.common.Util.fileAsURI;
 import static org.apache.hadoop.hdfs.server.namenode.FSImageTestUtil.assertNNHasCheckpoints;
 import static org.apache.hadoop.hdfs.server.namenode.FSImageTestUtil.getNameNodeCurrentDirs;
@@ -1999,7 +2000,7 @@ public class TestCheckpoint {
         .when(dstImage).getFiles(
             Mockito.<NameNodeDirType>anyObject(), Mockito.anyString());
 
-      File mockImageFile = File.createTempFile("image", "");
+      File mockImageFile = Files.createTempFile("image", "").toFile();
       FileOutputStream imageFile = new FileOutputStream(mockImageFile);
       imageFile.write("data".getBytes());
       imageFile.close();

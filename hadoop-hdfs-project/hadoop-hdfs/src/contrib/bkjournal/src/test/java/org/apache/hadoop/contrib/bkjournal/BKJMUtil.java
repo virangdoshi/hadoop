@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.contrib.bkjournal;
 
+import java.nio.file.Files;
 import static org.junit.Assert.*;
 
 import java.net.URI;
@@ -120,8 +121,7 @@ class BKJMUtil {
     int port = nextPort++;
     ServerConfiguration bookieConf = new ServerConfiguration();
     bookieConf.setBookiePort(port);
-    File tmpdir = File.createTempFile("bookie" + Integer.toString(port) + "_",
-                                      "test");
+    File tmpdir = Files.createTempFile("bookie" + Integer.toString(port) + "_", "test").toFile();
     tmpdir.delete();
     tmpdir.mkdir();
 

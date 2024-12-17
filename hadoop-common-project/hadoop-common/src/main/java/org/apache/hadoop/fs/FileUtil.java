@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -1135,8 +1136,7 @@ public class FileUtil {
                                                final String prefix,
                                                final boolean isDeleteOnExit)
     throws IOException {
-    File tmp = File.createTempFile(prefix + basefile.getName(),
-                                   "", basefile.getParentFile());
+    File tmp = Files.createTempFile(basefile.getParentFile().toPath(), prefix + basefile.getName(), "").toFile();
     if (isDeleteOnExit) {
       tmp.deleteOnExit();
     }
@@ -1321,7 +1321,7 @@ public class FileUtil {
         Attributes.Name.CLASS_PATH.toString(), jarClassPath);
 
     // Write the manifest to output JAR file
-    File classPathJar = File.createTempFile("classpath-", ".jar", workingDir);
+    File classPathJar = Files.createTempFile(workingDir.toPath(), "classpath-", ".jar").toFile();
     try (FileOutputStream fos = new FileOutputStream(classPathJar);
          BufferedOutputStream bos = new BufferedOutputStream(fos)) {
       JarOutputStream jos = new JarOutputStream(bos, jarManifest);

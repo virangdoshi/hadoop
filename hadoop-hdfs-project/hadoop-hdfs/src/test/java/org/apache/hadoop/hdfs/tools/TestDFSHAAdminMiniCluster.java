@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.tools;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -184,7 +185,7 @@ public class TestDFSHAAdminMiniCluster {
 
     // Set up fencer to write info about the fencing target into a
     // tmp file, so we can verify that the args were substituted right
-    File tmpFile = File.createTempFile("testFencer", ".txt");
+    File tmpFile = Files.createTempFile("testFencer", ".txt").toFile();
     tmpFile.deleteOnExit();
     if (Shell.WINDOWS) {
       conf.set(DFSConfigKeys.DFS_HA_FENCE_METHODS_KEY,

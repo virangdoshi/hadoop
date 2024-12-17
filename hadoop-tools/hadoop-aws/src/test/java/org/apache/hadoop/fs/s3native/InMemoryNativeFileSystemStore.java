@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.s3native;
 
+import java.nio.file.Files;
 import static org.apache.hadoop.fs.s3native.NativeS3FileSystem.PATH_DELIMITER;
 
 import java.io.BufferedInputStream;
@@ -118,7 +119,7 @@ public class InMemoryNativeFileSystemStore implements NativeFileSystemStore {
     if (!dir.exists() && !dir.mkdirs()) {
       throw new IOException("Cannot create S3 buffer directory: " + dir);
     }
-    File result = File.createTempFile("test-", ".tmp", dir);
+    File result = Files.createTempFile(dir.toPath(), "test-", ".tmp").toFile();
     result.deleteOnExit();
     return result;
   }

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -704,7 +705,7 @@ public class StreamJob implements Tool {
     String tmp = jobConf_.get("stream.tmpdir"); //, "/tmp/${mapreduce.job.user.name}/"
     File tmpDir = (tmp == null) ? null : new File(tmp);
     // tmpDir=null means OS default tmp dir
-    File jobJar = File.createTempFile("streamjob", ".jar", tmpDir);
+    File jobJar = Files.createTempFile(tmpDir.toPath(), "streamjob", ".jar").toFile();
     System.out.println("packageJobJar: " + packageFiles_ + " " + unjarFiles + " " + jobJar
                        + " tmpDir=" + tmpDir);
     if (debug_ == 0) {

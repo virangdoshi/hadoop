@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.StringUtils;
@@ -114,7 +115,7 @@ public class PowerShellFencer extends Configured implements FenceMethod {
     String ps1script = null;
     BufferedWriter writer = null;
     try {
-      File file = File.createTempFile("temp-fence-command", ".ps1");
+      File file = Files.createTempFile("temp-fence-command", ".ps1").toFile();
       file.deleteOnExit();
       FileOutputStream fos = new FileOutputStream(file, false);
       OutputStreamWriter osw =

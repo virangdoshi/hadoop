@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.io.IOUtils;
@@ -77,7 +78,7 @@ public class TestFileSink {
     String user = System.getProperty("user.name", "unknown-user");
     File dir = new File(tmpPath + "/" + user);
     dir.mkdirs();
-    return File.createTempFile(prefix, suffix, dir);
+    return Files.createTempFile(dir.toPath(), prefix, suffix).toFile();
   }
   
   @Test(timeout=6000) 

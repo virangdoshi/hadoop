@@ -20,6 +20,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager.containermanager.linux.runtime.docker;
 
+import java.nio.file.Files;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
@@ -66,9 +67,8 @@ public final class DockerClient {
       throws ContainerExecutionException {
     File dockerCommandFile = null;
     try {
-      dockerCommandFile = File.createTempFile(TMP_FILE_PREFIX + filePrefix,
-          TMP_FILE_SUFFIX, new
-          File(tmpDirPath));
+      dockerCommandFile = Files.createTempFile(new
+          File(tmpDirPath).toPath(), TMP_FILE_PREFIX + filePrefix, TMP_FILE_SUFFIX).toFile();
 
       Writer writer = new OutputStreamWriter(
           new FileOutputStream(dockerCommandFile), "UTF-8");

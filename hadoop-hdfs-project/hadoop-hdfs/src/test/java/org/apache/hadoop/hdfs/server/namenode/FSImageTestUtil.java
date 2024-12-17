@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -101,7 +102,7 @@ public abstract class FSImageTestUtil {
    */
   public static String getImageFileMD5IgnoringTxId(File imageFile)
       throws IOException {
-    File tmpFile = File.createTempFile("hadoop_imagefile_tmp", "fsimage");
+    File tmpFile = Files.createTempFile("hadoop_imagefile_tmp", "fsimage").toFile();
     tmpFile.deleteOnExit();
     try {
       Files.copy(imageFile, tmpFile);

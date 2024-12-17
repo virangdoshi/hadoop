@@ -19,6 +19,7 @@
 package org.apache.hadoop.tools;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.nio.file.Files;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -169,7 +170,7 @@ public class HadoopArchiveLogs implements Tool {
           }
           LOG.info(sb.toString());
 
-          File localScript = File.createTempFile("hadoop-archive-logs-", ".sh");
+          File localScript = Files.createTempFile("hadoop-archive-logs-", ".sh").toFile();
           generateScript(localScript, workingDir, remoteRootLogDir, suffix);
 
           exitCode = runDistributedShell(localScript) ? 0 : 1;

@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.service.launcher;
 
+import java.nio.file.Files;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.service.Service;
@@ -194,7 +195,7 @@ public class AbstractServiceLauncherTestBase extends Assert implements
   protected String configFile(Configuration conf) throws IOException {
     File directory = new File(CONF_FILE_DIR);
     directory.mkdirs();
-    File file = File.createTempFile("conf", ".xml", directory);
+    File file = Files.createTempFile(directory.toPath(), "conf", ".xml").toFile();
     try(OutputStream fos = new FileOutputStream(file)) {
       conf.writeXml(fos);
     }

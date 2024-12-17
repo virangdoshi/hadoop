@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -311,7 +312,7 @@ public abstract class ClientBaseWithFixes extends ZKTestCase {
         return createTmpDir(BASETEST);
     }
     static File createTmpDir(File parentDir) throws IOException {
-        File tmpFile = File.createTempFile("test", ".junit", parentDir);
+        File tmpFile = Files.createTempFile(parentDir.toPath(), "test", ".junit").toFile();
         // don't delete tmpFile - this ensures we don't attempt to create
         // a tmpDir with a duplicate name
         File tmpDir = new File(tmpFile + ".dir");

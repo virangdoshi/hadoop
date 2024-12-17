@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.tools.util;
 
+import java.nio.file.Files;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.IOUtils;
@@ -140,7 +141,7 @@ public class TestThrottledInputStream {
   }
 
   private File createFile() throws IOException {
-    return File.createTempFile("tmp", "dat");
+    return Files.createTempFile("tmp", "dat").toFile();
   }
 
   private void writeToFile(File tmpFile, long sizeInKB) throws IOException {

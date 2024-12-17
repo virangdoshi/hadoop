@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.s3a;
 
+import java.nio.file.Files;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -153,8 +154,7 @@ public class ITestS3AFileOperationCost extends AbstractS3ATestBase {
     describe("testCostOfCopyFromLocalFile");
     File localTestDir = getTestDir("tmp");
     localTestDir.mkdirs();
-    File tmpFile = File.createTempFile("tests3acost", ".txt",
-        localTestDir);
+    File tmpFile = Files.createTempFile(localTestDir.toPath(), "tests3acost", ".txt").toFile();
     tmpFile.delete();
     try {
       URI localFileURI = tmpFile.toURI();

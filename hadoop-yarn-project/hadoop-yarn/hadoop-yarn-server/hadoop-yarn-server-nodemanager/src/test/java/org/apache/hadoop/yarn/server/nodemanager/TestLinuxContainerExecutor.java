@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager;
 
+import java.nio.file.Files;
 import static org.apache.hadoop.fs.CreateFlag.CREATE;
 import static org.apache.hadoop.fs.CreateFlag.OVERWRITE;
 import static org.junit.Assert.assertEquals;
@@ -277,7 +278,7 @@ public class TestLinuxContainerExecutor {
   }
 
   private String writeScriptFile(String... cmd) throws IOException {
-    File f = File.createTempFile("TestLinuxContainerExecutor", ".sh");
+    File f = Files.createTempFile("TestLinuxContainerExecutor", ".sh").toFile();
     f.deleteOnExit();
     PrintWriter p = new PrintWriter(new FileOutputStream(f));
     p.println("#!/bin/sh");

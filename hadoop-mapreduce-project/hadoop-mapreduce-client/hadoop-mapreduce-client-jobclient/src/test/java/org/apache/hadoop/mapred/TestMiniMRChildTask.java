@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapred;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -99,7 +100,7 @@ public class TestMiniMRChildTask {
         } else {
           fail("Temp directory " + tmpDir +" doesnt exist.");
         }
-        File tmpFile = File.createTempFile("test", ".tmp");
+        File tmpFile = Files.createTempFile("test", ".tmp").toFile();
       }
       public void configure(JobConf job) {
         tmpDir = new Path(System.getProperty("java.io.tmpdir"));

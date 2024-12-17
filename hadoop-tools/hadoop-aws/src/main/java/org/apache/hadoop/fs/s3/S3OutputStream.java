@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -94,7 +95,7 @@ class S3OutputStream extends OutputStream {
     if (!dir.exists() && !dir.mkdirs()) {
       throw new IOException("Cannot create S3 buffer directory: " + dir);
     }
-    File result = File.createTempFile("output-", ".tmp", dir);
+    File result = Files.createTempFile(dir.toPath(), "output-", ".tmp").toFile();
     result.deleteOnExit();
     return result;
   }

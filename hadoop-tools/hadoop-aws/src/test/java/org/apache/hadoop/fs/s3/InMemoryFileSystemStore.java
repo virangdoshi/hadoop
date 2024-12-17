@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -104,7 +105,7 @@ public class InMemoryFileSystemStore implements FileSystemStore {
     if (!dir.exists() && !dir.mkdirs()) {
       throw new IOException("Cannot create S3 buffer directory: " + dir);
     }
-    File result = File.createTempFile("test-", ".tmp", dir);
+    File result = Files.createTempFile(dir.toPath(), "test-", ".tmp").toFile();
     result.deleteOnExit();
     return result;
   }

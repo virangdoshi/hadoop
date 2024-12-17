@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.security;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -50,7 +51,7 @@ public class TestShellBasedIdMapping {
 
   @Test
   public void testStaticMapParsing() throws IOException {
-    File tempStaticMapFile = File.createTempFile("nfs-", ".map");
+    File tempStaticMapFile = Files.createTempFile("nfs-", ".map").toFile();
     final String staticMapFileContents =
         "uid 10 100\n" +
         "gid 10 200\n" +
@@ -130,7 +131,7 @@ public class TestShellBasedIdMapping {
   @Test
   public void testStaticMapUpdate() throws IOException {
     assumeTrue(!Shell.WINDOWS);
-    File tempStaticMapFile = File.createTempFile("nfs-", ".map");
+    File tempStaticMapFile = Files.createTempFile("nfs-", ".map").toFile();
     tempStaticMapFile.delete();
     Configuration conf = new Configuration();
     conf.setLong(IdMappingConstant.USERGROUPID_UPDATE_MILLIS_KEY, 1000);    
