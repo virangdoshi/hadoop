@@ -13,6 +13,7 @@
  */
 package org.apache.hadoop.security.authentication.server;
 
+import io.github.pixee.security.Newlines;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
@@ -179,7 +180,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     if (authorization == null
         || !AuthenticationHandlerUtil.matchAuthScheme(HttpConstants.BASIC,
             authorization)) {
-      response.setHeader(WWW_AUTHENTICATE, HttpConstants.BASIC);
+      response.setHeader(WWW_AUTHENTICATE, Newlines.stripAll(HttpConstants.BASIC));
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       if (authorization == null) {
         logger.trace("Basic auth starting");
