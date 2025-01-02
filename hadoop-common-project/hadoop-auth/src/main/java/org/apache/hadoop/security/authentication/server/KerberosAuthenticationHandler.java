@@ -13,6 +13,7 @@
  */
 package org.apache.hadoop.security.authentication.server;
 
+import io.github.pixee.security.Newlines;
 import org.apache.hadoop.security.authentication.client.AuthenticationException;
 import org.apache.hadoop.security.authentication.client.KerberosAuthenticator;
 import org.apache.commons.codec.binary.Base64;
@@ -266,7 +267,7 @@ public class KerberosAuthenticationHandler implements AuthenticationHandler {
 
     if (authorization == null
         || !authorization.startsWith(KerberosAuthenticator.NEGOTIATE)) {
-      response.setHeader(WWW_AUTHENTICATE, KerberosAuthenticator.NEGOTIATE);
+      response.setHeader(WWW_AUTHENTICATE, Newlines.stripAll(KerberosAuthenticator.NEGOTIATE));
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       if (authorization == null) {
         LOG.trace("SPNEGO starting for url: {}", request.getRequestURL());
@@ -331,8 +332,8 @@ public class KerberosAuthenticationHandler implements AuthenticationHandler {
       if (serverToken != null && serverToken.length > 0) {
         String authenticate = base64.encodeToString(serverToken);
         response.setHeader(KerberosAuthenticator.WWW_AUTHENTICATE,
-                           KerberosAuthenticator.NEGOTIATE + " " +
-                           authenticate);
+                           Newlines.stripAll(KerberosAuthenticator.NEGOTIATE + " " +
+                           authenticate));
       }
       if (!gssContext.isEstablished()) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

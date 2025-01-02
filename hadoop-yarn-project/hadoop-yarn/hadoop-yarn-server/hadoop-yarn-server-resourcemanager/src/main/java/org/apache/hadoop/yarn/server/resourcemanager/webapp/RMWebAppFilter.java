@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.resourcemanager.webapp;
 
+import io.github.pixee.security.Newlines;
 import static org.apache.hadoop.yarn.util.StringHelper.pjoin;
 
 import java.io.IOException;
@@ -130,7 +131,7 @@ public class RMWebAppFilter extends GuiceContainer {
             + htmlEscapedUriWithQueryString;
         PrintWriter out = response.getWriter();
         out.println(redirectMsg);
-        response.setHeader("Location", redirectPath);
+        response.setHeader("Location", Newlines.stripAll(redirectPath));
         response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
         return;
       } else {
@@ -161,7 +162,7 @@ public class RMWebAppFilter extends GuiceContainer {
         PrintWriter out = response.getWriter();
         out.println(redirectMsg);
         if (doRetry) {
-          response.setHeader("Refresh", next + ";url=" + redirectUrl);
+          response.setHeader("Refresh", Newlines.stripAll(next + ";url=" + redirectUrl));
           response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
         }
       }
@@ -169,7 +170,7 @@ public class RMWebAppFilter extends GuiceContainer {
     } else if (ahsEnabled) {
       String ahsRedirectUrl = ahsRedirectPath(uriWithQueryString, rmWebApp);
       if(ahsRedirectUrl != null) {
-        response.setHeader("Location", ahsRedirectUrl);
+        response.setHeader("Location", Newlines.stripAll(ahsRedirectUrl));
         response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
         return;
       }

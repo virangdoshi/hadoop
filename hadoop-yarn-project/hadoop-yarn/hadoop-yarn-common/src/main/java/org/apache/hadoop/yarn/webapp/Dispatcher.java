@@ -19,6 +19,7 @@
 package org.apache.hadoop.yarn.webapp;
 
 import static com.google.common.base.Preconditions.checkState;
+import io.github.pixee.security.Newlines;
 
 import java.io.IOException;
 import java.net.URI;
@@ -196,7 +197,7 @@ public class Dispatcher extends HttpServlet {
     cookie = new Cookie(ERROR_COOKIE, st);
     cookie.setPath(path);
     res.addCookie(cookie);
-    res.setHeader("Location", path);
+    res.setHeader("Location", Newlines.stripAll(path));
   }
 
   public static void removeErrorCookies(HttpServletResponse res, String path) {
