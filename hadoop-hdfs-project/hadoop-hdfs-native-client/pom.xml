@@ -73,6 +73,10 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.github.pixee</groupId>
+      <artifactId>java-security-toolkit</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -140,15 +144,13 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
                 <configuration>
                   <target>
                     <condition property="generator" value="Visual Studio 10" else="Visual Studio 10 Win64">
-                      <equals arg1="Win32" arg2="${env.PLATFORM}" />
+                      <equals arg1="Win32" arg2="${env.PLATFORM}"/>
                     </condition>
                     <mkdir dir="${project.build.directory}/native"/>
-                    <exec executable="cmake" dir="${project.build.directory}/native"
-                          failonerror="true">
+                    <exec executable="cmake" dir="${project.build.directory}/native" failonerror="true">
                       <arg line="${basedir}/src/ -DGENERATED_JAVAH=${project.build.directory}/native/javah -DJVM_ARCH_DATA_MODEL=${sun.arch.data.model} -DREQUIRE_FUSE=${require.fuse} -G '${generator}'"/>
                     </exec>
-                    <exec executable="msbuild" dir="${project.build.directory}/native"
-                          failonerror="true">
+                    <exec executable="msbuild" dir="${project.build.directory}/native" failonerror="true">
                       <arg line="ALL_BUILD.vcxproj /nologo /p:Configuration=RelWithDebInfo /p:LinkIncremental=false"/>
                     </exec>
                     <!-- Copy for inclusion in distribution. -->
