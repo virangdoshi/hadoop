@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.SystemCommand;
 import java.io.*;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
@@ -63,7 +64,7 @@ public class Environment extends Properties {
 
     // Read the environment variables
 
-    Process pid = Runtime.getRuntime().exec(command);
+    Process pid = SystemCommand.runCommand(Runtime.getRuntime(), command);
     BufferedReader in = new BufferedReader(
         new InputStreamReader(pid.getInputStream(), Charset.forName("UTF-8")));
     try {

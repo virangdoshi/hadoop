@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.applications.unmanagedamlauncher;
 
+import io.github.pixee.security.SystemCommand;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -230,7 +231,7 @@ public class UnmanagedAMLauncher {
       tokenFile.getAbsolutePath());
     
     String[] envAM = new String[envAMList.size()];
-    Process amProc = Runtime.getRuntime().exec(amCmd, envAMList.toArray(envAM));
+    Process amProc = SystemCommand.runCommand(Runtime.getRuntime(), amCmd, envAMList.toArray(envAM));
 
     final BufferedReader errReader = 
         new BufferedReader(new InputStreamReader(
