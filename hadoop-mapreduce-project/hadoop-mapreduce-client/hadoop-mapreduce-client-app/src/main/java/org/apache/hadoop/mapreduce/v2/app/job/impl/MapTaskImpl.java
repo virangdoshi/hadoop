@@ -81,7 +81,9 @@ public class MapTaskImpl extends TaskImpl {
   protected String getSplitsAsString() {
     String[] splits = getTaskSplitMetaInfo().getLocations();
     if (splits == null || splits.length == 0)
-    return "";
+    {
+        return "";
+    }
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < splits.length; i++) {
       if (i != 0) sb.append(",");
