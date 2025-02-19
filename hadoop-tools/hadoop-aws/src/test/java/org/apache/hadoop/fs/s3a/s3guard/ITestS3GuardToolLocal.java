@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.s3a.s3guard;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -121,7 +122,7 @@ public class ITestS3GuardToolLocal extends AbstractS3GuardToolTestBase {
              new BufferedReader(new InputStreamReader(
                  new ByteArrayInputStream(buf.toByteArray())))) {
       String line;
-      while ((line = reader.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         String[] fields = line.split("\\s");
         assertEquals("[" + line + "] does not have enough fields",
             4, fields.length);

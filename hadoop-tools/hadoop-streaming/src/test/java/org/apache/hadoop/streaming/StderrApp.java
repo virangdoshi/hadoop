@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 
 /**
@@ -52,7 +53,7 @@ public class StderrApp
       } catch (InterruptedException e) {}
     }
     
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       System.out.println(line);
     }
     

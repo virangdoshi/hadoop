@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs.loadGenerator;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -77,15 +78,15 @@ public class TestLoadGenerator extends Configured implements Tool {
       // successful case
       assertEquals(0, sg.run(args));
       BufferedReader in = new BufferedReader(new FileReader(DIR_STRUCTURE_FILE));
-      assertEquals(DIR_STRUCTURE_FIRST_LINE, in.readLine());
-      assertEquals(DIR_STRUCTURE_SECOND_LINE, in.readLine());
-      assertEquals(null, in.readLine());
+      assertEquals(DIR_STRUCTURE_FIRST_LINE, BoundedLineReader.readLine(in, 5_000_000));
+      assertEquals(DIR_STRUCTURE_SECOND_LINE, BoundedLineReader.readLine(in, 5_000_000));
+      assertEquals(null, BoundedLineReader.readLine(in, 5_000_000));
       in.close();
       
       in = new BufferedReader(new FileReader(FILE_STRUCTURE_FILE));
-      assertEquals(FILE_STRUCTURE_FIRST_LINE, in.readLine());
-      assertEquals(FILE_STRUCTURE_SECOND_LINE, in.readLine());
-      assertEquals(null, in.readLine());
+      assertEquals(FILE_STRUCTURE_FIRST_LINE, BoundedLineReader.readLine(in, 5_000_000));
+      assertEquals(FILE_STRUCTURE_SECOND_LINE, BoundedLineReader.readLine(in, 5_000_000));
+      assertEquals(null, BoundedLineReader.readLine(in, 5_000_000));
       in.close();
 
       String oldArg = args[MAX_DEPTH];

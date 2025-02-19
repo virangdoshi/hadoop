@@ -20,6 +20,7 @@
 
 package org.apache.hadoop.resourceestimator.translator.impl;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,7 +107,7 @@ public class BaseLogParser implements LogParser {
     final BufferedReader bf = new BufferedReader(
         new InputStreamReader(logs, StandardCharsets.UTF_8));
     String line = null;
-    while ((line = bf.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(bf, 5_000_000)) != null) {
       try {
         parseLine(line, jobMetas, skylineRecords);
       } catch (DataFieldNotFoundException e) {

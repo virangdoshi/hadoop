@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.applications.distributedshell;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -374,7 +375,7 @@ public class ApplicationMaster {
         Shell.execCommand("ls", "-al");
       buf = new BufferedReader(new StringReader(lines));
       String line = "";
-      while ((line = buf.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(buf, 5_000_000)) != null) {
         LOG.info("System CWD content: " + line);
         System.out.println("System CWD content: " + line);
       }

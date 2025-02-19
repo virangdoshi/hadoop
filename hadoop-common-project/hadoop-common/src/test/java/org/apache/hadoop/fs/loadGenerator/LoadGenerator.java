@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.loadGenerator;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
@@ -645,7 +646,7 @@ public class LoadGenerator extends Configured implements Tool {
     // Read script, parse values, build array of duration, read and write probs
 
     try {
-      while ((line = br.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
         lineNum++;
         if (line.startsWith("#") || line.isEmpty()) // skip comments and blanks
           continue;

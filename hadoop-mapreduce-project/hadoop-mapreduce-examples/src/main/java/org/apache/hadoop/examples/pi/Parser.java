@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.examples.pi;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,7 +83,7 @@ public final class Parser {
       final BufferedReader in = new BufferedReader(
           new InputStreamReader(new FileInputStream(f), Charsets.UTF_8)); 
       try {
-        for(String line; (line = in.readLine()) != null; )
+        for(String line; (line = BoundedLineReader.readLine(in, 5_000_000)) != null; )
           try {
             parseLine(line, m);
           } catch(RuntimeException e) {

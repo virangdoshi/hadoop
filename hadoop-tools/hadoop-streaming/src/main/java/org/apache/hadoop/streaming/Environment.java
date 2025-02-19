@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
@@ -68,7 +69,7 @@ public class Environment extends Properties {
         new InputStreamReader(pid.getInputStream(), Charset.forName("UTF-8")));
     try {
       while (true) {
-        String line = in.readLine();
+        String line = BoundedLineReader.readLine(in, 5_000_000);
         if (line == null)
           break;
         int p = line.indexOf("=");

@@ -20,6 +20,7 @@
 
 package org.apache.hadoop.resourceestimator.solver.impl;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.resourceestimator.common.api.RecurrenceId;
 import org.apache.hadoop.resourceestimator.common.api.ResourceSkyline;
@@ -86,7 +87,7 @@ public class TestLpSolver extends TestSolver {
     Reader fileReader = new InputStreamReader(new FileInputStream(file),
         Charset.forName("UTF-8"));
     BufferedReader bufferedReader = new BufferedReader(fileReader);
-    String line = bufferedReader.readLine();
+    String line = BoundedLineReader.readLine(bufferedReader, 5_000_000);
     Configuration config = new Configuration();
     config.addResource(new org.apache.hadoop.fs.Path(
         ResourceEstimatorConfiguration.CONFIG_FILE));
@@ -103,7 +104,7 @@ public class TestLpSolver extends TestSolver {
               / containerMemAlloc);
       assertEquals(Integer.parseInt(line), numContainer,
           0.1 * Integer.parseInt(line));
-      line = bufferedReader.readLine();
+      line = BoundedLineReader.readLine(bufferedReader, 5_000_000);
       count++;
     }
     fileReader.close();

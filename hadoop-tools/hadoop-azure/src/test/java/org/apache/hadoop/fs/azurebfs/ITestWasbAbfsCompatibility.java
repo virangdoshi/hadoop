@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs.azurebfs;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -115,7 +116,7 @@ public class ITestWasbAbfsCompatibility extends AbstractAbfsIntegrationTest {
       final FileSystem readFs = readFileWithAbfs[i] ? abfs : wasb;
 
       try(BufferedReader br =new BufferedReader(new InputStreamReader(readFs.open(path)))) {
-        String line = br.readLine();
+        String line = BoundedLineReader.readLine(br, 5_000_000);
         assertEquals("Wrong text from " + readFs,
             TEST_CONTEXT, line);
       }

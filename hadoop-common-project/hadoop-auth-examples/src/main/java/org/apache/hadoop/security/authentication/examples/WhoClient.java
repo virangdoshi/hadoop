@@ -13,6 +13,7 @@
  */
 package org.apache.hadoop.security.authentication.examples;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.security.authentication.client.AuthenticatedURL;
 
 import java.io.BufferedReader;
@@ -43,10 +44,10 @@ public class WhoClient {
         BufferedReader reader = new BufferedReader(
             new InputStreamReader(
                 conn.getInputStream(), Charset.forName("UTF-8")));
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         while (line != null) {
           System.out.println(line);
-          line = reader.readLine();
+          line = BoundedLineReader.readLine(reader, 5_000_000);
         }
         reader.close();
       }

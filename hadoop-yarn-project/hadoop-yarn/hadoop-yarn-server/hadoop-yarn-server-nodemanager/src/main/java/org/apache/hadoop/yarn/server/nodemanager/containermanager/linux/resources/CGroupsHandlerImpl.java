@@ -22,6 +22,7 @@ package org.apache.hadoop.yarn.server.nodemanager.containermanager.linux.resourc
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
+import io.github.pixee.security.BoundedLineReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.hadoop.classification.InterfaceAudience;
@@ -220,8 +221,8 @@ class CGroupsHandlerImpl implements CGroupsHandler {
       FileInputStream fis = new FileInputStream(new File(mtab));
       in = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 
-      for (String str = in.readLine(); str != null;
-           str = in.readLine()) {
+      for (String str = BoundedLineReader.readLine(in, 5_000_000); str != null;
+           str = BoundedLineReader.readLine(in, 5_000_000)) {
         Matcher m = MTAB_FILE_FORMAT.matcher(str);
         boolean mat = m.find();
         if (mat) {
@@ -484,7 +485,7 @@ class CGroupsHandlerImpl implements CGroupsHandler {
       try (BufferedReader inl =
           new BufferedReader(new InputStreamReader(new FileInputStream(cgf
               + "/tasks"), "UTF-8"))) {
-        str = inl.readLine();
+        str = BoundedLineReader.readLine(inl, 5_000_000);
         if (str != null) {
           LOG.debug("First line in cgroup tasks file: " + cgf + " " + str);
         }

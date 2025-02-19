@@ -19,6 +19,7 @@
 package org.apache.hadoop.hdfs.server.blockmanagement;
 
 import com.google.common.base.Supplier;
+import io.github.pixee.security.BoundedLineReader;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -278,7 +279,7 @@ public class TestNameNodePrunesMissingStorages {
     boolean success = false;
     try {
       String line;
-      while ((line = in.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
         if (line.startsWith(STORAGE_ID)) {
           out.write(STORAGE_ID + newStorageId + "\n");
         } else {

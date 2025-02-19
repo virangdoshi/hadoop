@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -670,7 +671,7 @@ public class TestMapRed extends Configured implements Tool {
   private static void printTextFile(FileSystem fs, Path p) throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(fs.open(p)));
     String line;
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       System.out.println("  Row: " + line);
     }
     in.close();

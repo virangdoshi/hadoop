@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -294,7 +295,7 @@ public class DistributedFSCheck extends TestCase {
     StringTokenizer  badBlocks = null;
     long nrBadBlocks = 0;
     String line;
-    while((line = lines.readLine()) != null) {
+    while((line = BoundedLineReader.readLine(lines, 5_000_000)) != null) {
       StringTokenizer tokens = new StringTokenizer(line, " \t\n\r\f%");
       String attr = tokens.nextToken(); 
       if (attr.endsWith("blocks"))

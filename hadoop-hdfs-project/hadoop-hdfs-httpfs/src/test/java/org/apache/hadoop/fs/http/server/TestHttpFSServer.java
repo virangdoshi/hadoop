@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs.http.server;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.security.authentication.util.SignerSecretProvider;
@@ -312,7 +313,7 @@ public class TestHttpFSServer extends HFSTestCase {
     conn = (HttpURLConnection) url.openConnection();
     Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    String line = reader.readLine();
+    String line = BoundedLineReader.readLine(reader, 5_000_000);
     reader.close();
     Assert.assertTrue(line.contains("\"counters\":{"));
 
@@ -336,7 +337,7 @@ public class TestHttpFSServer extends HFSTestCase {
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    reader.readLine();
+    BoundedLineReader.readLine(reader, 5_000_000);
     reader.close();
   }
 
@@ -375,7 +376,7 @@ public class TestHttpFSServer extends HFSTestCase {
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    reader.readLine();
+    BoundedLineReader.readLine(reader, 5_000_000);
     reader.close();
   }
 
@@ -438,7 +439,7 @@ public class TestHttpFSServer extends HFSTestCase {
     BufferedReader reader =
             new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-    return reader.readLine();
+    return BoundedLineReader.readLine(reader, 5_000_000);
   }
 
   /**
@@ -919,7 +920,7 @@ public class TestHttpFSServer extends HFSTestCase {
     Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
     final BufferedReader reader =
         new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    String result = reader.readLine();
+    String result = BoundedLineReader.readLine(reader, 5_000_000);
     //Validates if the content format is correct
     Assert.assertTrue(result.
         equals("{\"Path\":\"/tmp/tmp-snap-test/.snapshot/snap-with-name\"}"));
@@ -941,7 +942,7 @@ public class TestHttpFSServer extends HFSTestCase {
     Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
     final BufferedReader reader = new BufferedReader(
         new InputStreamReader(conn.getInputStream()));
-    String result = reader.readLine();
+    String result = BoundedLineReader.readLine(reader, 5_000_000);
     //Validates if the content format is correct
     Assert.assertTrue(Pattern.matches(
         "(\\{\\\"Path\\\"\\:\\\"/tmp/tmp-snap-test/.snapshot/s)" +

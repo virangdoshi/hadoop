@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -387,7 +388,7 @@ public class TestMRTimelineEventHandling {
     try {
       reader = new BufferedReader(new FileReader(entityFile));
       long idPrefix = -1;
-      while ((strLine = reader.readLine()) != null) {
+      while ((strLine = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         if (strLine.trim().length() > 0) {
           org.apache.hadoop.yarn.api.records.timelineservice.TimelineEntity
               entity =

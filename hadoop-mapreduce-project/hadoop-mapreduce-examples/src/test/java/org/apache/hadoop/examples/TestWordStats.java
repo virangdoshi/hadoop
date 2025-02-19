@@ -17,6 +17,7 @@
 */
 package org.apache.hadoop.examples;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -71,7 +72,7 @@ public class TestWordStats {
           br = new BufferedReader(new InputStreamReader(fs.open(fileStat.getPath())));
 
           String line;
-          while ((line = br.readLine()) != null) {
+          while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
             StringTokenizer st = new StringTokenizer(line);
             String word;
             while (st.hasMoreTokens()) {
@@ -126,7 +127,7 @@ public class TestWordStats {
           br = new BufferedReader(new InputStreamReader(fs.open(fileStat.getPath())));
 
           String line;
-          while ((line = br.readLine()) != null) {
+          while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
             StringTokenizer st = new StringTokenizer(line);
             String word;
             while (st.hasMoreTokens()) {
@@ -193,7 +194,7 @@ public class TestWordStats {
           br = new BufferedReader(new InputStreamReader(fs.open(fileStat.getPath())));
 
           String line;
-          while ((line = br.readLine()) != null) {
+          while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
             StringTokenizer st = new StringTokenizer(line);
             String word;
             while (st.hasMoreTokens()) {

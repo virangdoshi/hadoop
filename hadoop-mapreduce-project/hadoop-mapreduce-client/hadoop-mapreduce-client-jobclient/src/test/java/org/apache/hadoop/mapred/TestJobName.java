@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -65,8 +66,8 @@ public class TestJobName extends ClusterMapReduceTestCase {
     assertEquals(1, outputFiles.length);
     InputStream is = getFileSystem().open(outputFiles[0]);
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-    assertEquals("0\tb a", reader.readLine());
-    assertNull(reader.readLine());
+    assertEquals("0\tb a", BoundedLineReader.readLine(reader, 5_000_000));
+    assertNull(BoundedLineReader.readLine(reader, 5_000_000));
     reader.close();
   }
 
@@ -100,8 +101,8 @@ public class TestJobName extends ClusterMapReduceTestCase {
     assertEquals(1, outputFiles.length);
     InputStream is = getFileSystem().open(outputFiles[0]);
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-    assertEquals("0\tb a", reader.readLine());
-    assertNull(reader.readLine());
+    assertEquals("0\tb a", BoundedLineReader.readLine(reader, 5_000_000));
+    assertNull(BoundedLineReader.readLine(reader, 5_000_000));
     reader.close();
   }
 

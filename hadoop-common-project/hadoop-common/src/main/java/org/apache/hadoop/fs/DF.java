@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -147,10 +148,10 @@ public class DF extends Shell {
   @Override
   protected void parseExecResult(BufferedReader lines) throws IOException {
     output.clear();
-    String line = lines.readLine();
+    String line = BoundedLineReader.readLine(lines, 5_000_000);
     while (line != null) {
       output.add(line);
-      line = lines.readLine();
+      line = BoundedLineReader.readLine(lines, 5_000_000);
     }
   }
   

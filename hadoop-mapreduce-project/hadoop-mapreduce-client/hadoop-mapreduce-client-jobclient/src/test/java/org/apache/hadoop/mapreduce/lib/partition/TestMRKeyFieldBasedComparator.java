@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapreduce.lib.partition;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
@@ -81,7 +82,7 @@ public class TestMRKeyFieldBasedComparator extends HadoopTestCase {
     if (outputFiles.length > 0) {
       InputStream is = getFileSystem().open(outputFiles[0]);
       BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-      String line = reader.readLine();
+      String line = BoundedLineReader.readLine(reader, 5_000_000);
       //make sure we get what we expect as the first line, and also
       //that we have two lines (both the lines must end up in the same
       //reducer since the partitioner takes the same key spec for all
@@ -91,7 +92,7 @@ public class TestMRKeyFieldBasedComparator extends HadoopTestCase {
       } else if (expect == 2) {
         assertTrue(line.startsWith(line2));
       }
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       if (expect == 1) {
         assertTrue(line.startsWith(line2));
       } else if (expect == 2) {

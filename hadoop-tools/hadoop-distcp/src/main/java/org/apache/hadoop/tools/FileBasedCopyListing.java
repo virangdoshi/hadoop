@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -77,10 +78,10 @@ public class FileBasedCopyListing extends CopyListing {
     try {
       input = new BufferedReader(new InputStreamReader(fs.open(sourceListing),
           Charset.forName("UTF-8")));
-      String line = input.readLine();
+      String line = BoundedLineReader.readLine(input, 5_000_000);
       while (line != null) {
         result.add(new Path(line));
-        line = input.readLine();
+        line = BoundedLineReader.readLine(input, 5_000_000);
       }
     } finally {
       IOUtils.closeStream(input);

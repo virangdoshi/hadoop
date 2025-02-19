@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -257,7 +258,7 @@ public class CgroupsLCEResourcesHandler implements LCEResourcesHandler {
       try (BufferedReader inl =
             new BufferedReader(new InputStreamReader(new FileInputStream(cgf
               + "/tasks"), "UTF-8"))) {
-        str = inl.readLine();
+        str = BoundedLineReader.readLine(inl, 5_000_000);
         if (str != null) {
           LOG.debug("First line in cgroup tasks file: " + cgf + " " + str);
         }
@@ -414,8 +415,8 @@ public class CgroupsLCEResourcesHandler implements LCEResourcesHandler {
       FileInputStream fis = new FileInputStream(new File(getMtabFileName()));
       in = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 
-      for (String str = in.readLine(); str != null;
-          str = in.readLine()) {
+      for (String str = BoundedLineReader.readLine(in, 5_000_000); str != null;
+          str = BoundedLineReader.readLine(in, 5_000_000)) {
         Matcher m = MTAB_FILE_FORMAT.matcher(str);
         boolean mat = m.find();
         if (mat) {

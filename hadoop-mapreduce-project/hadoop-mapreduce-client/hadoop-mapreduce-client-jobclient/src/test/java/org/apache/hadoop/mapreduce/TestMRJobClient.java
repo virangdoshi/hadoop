@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapreduce;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -312,7 +313,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
     BufferedReader br = new BufferedReader(new InputStreamReader(
         new ByteArrayInputStream(out.toByteArray())));
     int counter = 0;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       counter++;
     }
@@ -334,7 +335,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
     BufferedReader br = new BufferedReader(new InputStreamReader(
         new ByteArrayInputStream(out.toByteArray())));
     int counter = 0;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       counter++;
     }
@@ -355,7 +356,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
     BufferedReader br = new BufferedReader(new InputStreamReader(
         new ByteArrayInputStream(out.toByteArray())));
     int counter = 0;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       counter++;
     }
@@ -496,8 +497,8 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
       throws IOException, JSONException {
     BufferedReader br = new BufferedReader(new InputStreamReader(
         new ByteArrayInputStream(out.toByteArray())));
-    br.readLine();
-    String line = br.readLine();
+    BoundedLineReader.readLine(br, 5_000_000);
+    String line = BoundedLineReader.readLine(br, 5_000_000);
     br.close();
     assertEquals("Hadoop job: " + jobId, line);
     out.reset();
@@ -518,8 +519,8 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
       ByteArrayOutputStream out, File outFile)
       throws IOException, JSONException {
     BufferedReader br = new BufferedReader(new FileReader(outFile));
-    br.readLine();
-    String line = br.readLine();
+    BoundedLineReader.readLine(br, 5_000_000);
+    String line = BoundedLineReader.readLine(br, 5_000_000);
     br.close();
     assertEquals("Hadoop job: " + jobId, line);
     assertEquals(0, out.size());
@@ -556,7 +557,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
         outFile.toString()}, out);
     assertEquals("Exit code", 0, exitCode);
     BufferedReader br = new BufferedReader(new FileReader(outFile));
-    String line = br.readLine();
+    String line = BoundedLineReader.readLine(br, 5_000_000);
     br.close();
     assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" " +
         "standalone=\"no\"?><configuration>", line);
@@ -579,7 +580,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
         new ByteArrayInputStream(out.toByteArray())));
     int counter = 0;
     String attemptId = ("attempt" + jobId.substring(3));
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       if (line.contains(attemptId)) {
         counter++;
@@ -603,7 +604,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
     BufferedReader br = new BufferedReader(new InputStreamReader(
         new ByteArrayInputStream(out.toByteArray())));
 
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       if (!line.contains("Job state:")) {
         continue;
@@ -649,7 +650,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
         new ByteArrayInputStream(out.toByteArray())));
     String line;
     int counter = 0;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       if (line.contains(jobId)) {
         counter++;
@@ -672,7 +673,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
         new BufferedReader(new InputStreamReader(new ByteArrayInputStream(
           out.toByteArray())));
     counter = 0;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       if (line.contains(job.getJobID().toString())) {
         counter++;
@@ -690,7 +691,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
     assertEquals("Exit code", 0, exitCode);
     BufferedReader br = new BufferedReader(new InputStreamReader(pis));
     String line;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       LOG.info("line = " + line);
       if (!line.contains(jobId)) {
         continue;

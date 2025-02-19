@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.tools.offlineImageViewer;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.apache.hadoop.fs.permission.AclEntryScope.ACCESS;
 import static org.apache.hadoop.fs.permission.AclEntryType.GROUP;
 import static org.apache.hadoop.fs.permission.AclEntryType.OTHER;
@@ -465,7 +466,7 @@ public class TestOfflineImageViewer {
             new BufferedReader(new InputStreamReader(input))) {
       String line;
       boolean header = true;
-      while ((line = reader.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         System.out.println(line);
         String[] fields = line.split(DELIMITER);
         assertEquals(12, fields.length);

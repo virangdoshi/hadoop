@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.resourcemanager.webapp;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -182,7 +183,7 @@ public class TestRMWebServicesHttpStaticUserPermissions {
         String error = "";
         BufferedReader reader = new BufferedReader(
             new InputStreamReader(errorStream, "UTF8"));
-        for (String line; (line = reader.readLine()) != null;) {
+        for (String line; (line = BoundedLineReader.readLine(reader, 5_000_000)) != null;) {
           error += line;
         }
         reader.close();

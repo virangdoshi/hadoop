@@ -19,6 +19,7 @@
 package org.apache.hadoop.fs.azure;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.fs.azure.security.Constants;
 import org.apache.hadoop.io.retry.RetryPolicy;
 import org.apache.hadoop.util.StringUtils;
@@ -204,7 +205,7 @@ public class WasbRemoteCallHelper {
               new InputStreamReader(response.getEntity().getContent(),
                   StandardCharsets.UTF_8));
           String responseLine = "";
-          while ((responseLine = rd.readLine()) != null) {
+          while ((responseLine = BoundedLineReader.readLine(rd, 5_000_000)) != null) {
             responseBody.append(responseLine);
           }
         } finally {

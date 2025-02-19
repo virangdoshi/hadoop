@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
@@ -110,11 +111,11 @@ public class TestLocalModeWithNewApis {
       LOG.info("Path" + ": "+ outputFile);
       BufferedReader file = 
         new BufferedReader(new InputStreamReader(fs.open(outputFile)));
-      String line = file.readLine();
+      String line = BoundedLineReader.readLine(file, 5_000_000);
       while (line != null) {
         result.append(line);
         result.append("\n");
-        line = file.readLine();
+        line = BoundedLineReader.readLine(file, 5_000_000);
       }
       file.close();
     }

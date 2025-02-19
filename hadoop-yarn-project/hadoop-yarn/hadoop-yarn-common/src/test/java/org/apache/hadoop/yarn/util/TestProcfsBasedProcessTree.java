@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.apache.hadoop.yarn.util.ProcfsBasedProcessTree.KB_TO_BYTES;
 import static org.apache.hadoop.yarn.util.ResourceCalculatorProcessTree.UNAVAILABLE;
 import static org.junit.Assert.fail;
@@ -279,7 +280,7 @@ public class TestProcfsBasedProcessTree {
     }
 
     try {
-      pid = pidFile.readLine();
+      pid = BoundedLineReader.readLine(pidFile, 5_000_000);
     } catch (IOException i) {
       LOG.error("Failed to read from " + pidFileName);
     } finally {

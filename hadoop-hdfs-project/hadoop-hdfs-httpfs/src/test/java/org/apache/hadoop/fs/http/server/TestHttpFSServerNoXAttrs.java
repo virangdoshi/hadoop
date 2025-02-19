@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs.http.server;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
@@ -181,7 +182,7 @@ public class TestHttpFSServerNoXAttrs extends HTestCase {
     BufferedReader reader;
     Assert.assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, resp);
     reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-    String res = reader.readLine();
+    String res = BoundedLineReader.readLine(reader, 5_000_000);
     Assert.assertTrue(res.contains("RemoteException"));
     Assert.assertTrue(res.contains("XAttr"));
     Assert.assertTrue(res.contains("rejected"));
@@ -212,7 +213,7 @@ public class TestHttpFSServerNoXAttrs extends HTestCase {
     Assert.assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, resp);
     BufferedReader reader;
     reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-    String err = reader.readLine();
+    String err = BoundedLineReader.readLine(reader, 5_000_000);
     Assert.assertTrue(err.contains("RemoteException"));
     Assert.assertTrue(err.contains("XAttr"));
     Assert.assertTrue(err.contains("rejected"));

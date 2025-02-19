@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.net;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.NET_TOPOLOGY_TABLE_MAPPING_FILE_KEY;
 
 import java.io.BufferedReader;
@@ -101,7 +102,7 @@ public class TableMapping extends CachedDNSToSwitchMapping {
       try (BufferedReader reader =
                new BufferedReader(new InputStreamReader(
                    new FileInputStream(filename), StandardCharsets.UTF_8))) {
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         while (line != null) {
           line = line.trim();
           if (line.length() != 0 && line.charAt(0) != '#') {
@@ -112,7 +113,7 @@ public class TableMapping extends CachedDNSToSwitchMapping {
               LOG.warn("Line does not have two columns. Ignoring. " + line);
             }
           }
-          line = reader.readLine();
+          line = BoundedLineReader.readLine(reader, 5_000_000);
         }
       } catch (Exception e) {
         LOG.warn(filename + " cannot be read.", e);

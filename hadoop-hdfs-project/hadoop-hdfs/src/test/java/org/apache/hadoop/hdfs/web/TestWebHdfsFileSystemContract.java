@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.hdfs.web;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -174,7 +175,7 @@ public class TestWebHdfsFileSystemContract extends FileSystemContractBaseTest {
     conn.connect();
     final BufferedReader in = new BufferedReader(new InputStreamReader(
         conn.getInputStream()));
-    for(String line; (line = in.readLine()) != null; ) {
+    for(String line; (line = BoundedLineReader.readLine(in, 5_000_000)) != null; ) {
       WebHdfsFileSystem.LOG.info("> " + line);
     }
 

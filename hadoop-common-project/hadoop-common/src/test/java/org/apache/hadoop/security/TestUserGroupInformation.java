@@ -16,6 +16,7 @@
  */
 package org.apache.hadoop.security;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.Path;
@@ -221,7 +222,7 @@ public class TestUserGroupInformation {
     Process pp = Runtime.getRuntime().exec("whoami");
     BufferedReader br = new BufferedReader
                           (new InputStreamReader(pp.getInputStream()));
-    String userName = br.readLine().trim();
+    String userName = BoundedLineReader.readLine(br, 5_000_000).trim();
     // If on windows domain, token format is DOMAIN\\user and we want to
     // extract only the user name
     if(Shell.WINDOWS) {
@@ -237,7 +238,7 @@ public class TestUserGroupInformation {
       Shell.getWinUtilsPath() + " groups -F"
       : "id -Gn " + userName);
     br = new BufferedReader(new InputStreamReader(pp.getInputStream()));
-    String line = br.readLine();
+    String line = BoundedLineReader.readLine(br, 5_000_000);
 
     System.out.println(userName + ":" + line);
    

@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.slive;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -233,7 +234,7 @@ public class SliveTest implements Tool {
         fileReader = new BufferedReader(new InputStreamReader(
             new DataInputStream(fs.open(fn.getPath()))));
         String line;
-        while ((line = fileReader.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(fileReader, 5_000_000)) != null) {
           String pieces[] = line.split("\t", 2);
           if (pieces.length == 2) {
             OperationOutput data = new OperationOutput(pieces[0], pieces[1]);

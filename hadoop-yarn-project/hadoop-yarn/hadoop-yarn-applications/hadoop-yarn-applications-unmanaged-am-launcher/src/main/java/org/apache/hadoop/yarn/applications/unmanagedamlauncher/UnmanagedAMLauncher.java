@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.applications.unmanagedamlauncher;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -245,10 +246,10 @@ public class UnmanagedAMLauncher {
       @Override
       public void run() {
         try {
-          String line = errReader.readLine();
+          String line = BoundedLineReader.readLine(errReader, 5_000_000);
           while((line != null) && !isInterrupted()) {
             System.err.println(line);
-            line = errReader.readLine();
+            line = BoundedLineReader.readLine(errReader, 5_000_000);
           }
         } catch(IOException ioe) {
           LOG.warn("Error reading the error stream", ioe);
@@ -259,10 +260,10 @@ public class UnmanagedAMLauncher {
       @Override
       public void run() {
         try {
-          String line = inReader.readLine();
+          String line = BoundedLineReader.readLine(inReader, 5_000_000);
           while((line != null) && !isInterrupted()) {
             System.out.println(line);
-            line = inReader.readLine();
+            line = BoundedLineReader.readLine(inReader, 5_000_000);
           }
         } catch(IOException ioe) {
           LOG.warn("Error reading the out stream", ioe);

@@ -17,6 +17,7 @@
 
 package org.apache.hadoop.security;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -41,7 +42,7 @@ public class TestProxyUserFromEnv {
     Process pp = Runtime.getRuntime().exec("whoami");
     BufferedReader br = new BufferedReader
                           (new InputStreamReader(pp.getInputStream()));
-    String realUser = br.readLine().trim();
+    String realUser = BoundedLineReader.readLine(br, 5_000_000).trim();
 
     // On Windows domain joined machine, whoami returns the username
     // in the DOMAIN\\username format, so we trim the domain part before

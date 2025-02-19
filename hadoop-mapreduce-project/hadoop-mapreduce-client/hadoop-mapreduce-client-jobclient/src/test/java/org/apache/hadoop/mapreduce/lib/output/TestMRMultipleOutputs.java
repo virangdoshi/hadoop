@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapreduce.lib.output;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -142,10 +143,10 @@ public class TestMRMultipleOutputs extends HadoopTestCase {
       new InputStreamReader(fs.open(
         new Path(FileOutputFormat.getOutputPath(job), "text-r-00000"))));
     int count = 0;
-    String line = reader.readLine();
+    String line = BoundedLineReader.readLine(reader, 5_000_000);
     while (line != null) {
       assertTrue(line.endsWith(TEXT));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       count++;
     }
     reader.close();
@@ -216,10 +217,10 @@ public class TestMRMultipleOutputs extends HadoopTestCase {
       new InputStreamReader(fs.open(
         new Path(FileOutputFormat.getOutputPath(job), "text-r-00000"))));
     int count = 0;
-    String line = reader.readLine();
+    String line = BoundedLineReader.readLine(reader, 5_000_000);
     while (line != null) {
       assertTrue(line.endsWith(TEXT));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       count++;
     }
     reader.close();

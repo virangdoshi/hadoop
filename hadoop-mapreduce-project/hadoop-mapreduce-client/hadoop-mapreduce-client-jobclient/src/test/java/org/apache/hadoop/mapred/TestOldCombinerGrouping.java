@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.junit.Assert;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -168,13 +169,13 @@ public class TestOldCombinerGrouping {
       BufferedReader br = new BufferedReader(new FileReader(
           new File(out, "part-00000")));
       Set<String> output = new HashSet<String>();
-      String line = br.readLine();
+      String line = BoundedLineReader.readLine(br, 5_000_000);
       Assert.assertNotNull(line);
       output.add(line.substring(0, 1) + line.substring(4, 5));
-      line = br.readLine();
+      line = BoundedLineReader.readLine(br, 5_000_000);
       Assert.assertNotNull(line);
       output.add(line.substring(0, 1) + line.substring(4, 5));
-      line = br.readLine();
+      line = BoundedLineReader.readLine(br, 5_000_000);
       Assert.assertNull(line);
       br.close();
 

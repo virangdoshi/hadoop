@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.examples.terasort;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 import java.util.*;
 
@@ -76,10 +77,10 @@ class TeraScheduler {
     List<String> result = new ArrayList<String>(10000);
     try (BufferedReader in = new BufferedReader(
         new InputStreamReader(new FileInputStream(filename), Charsets.UTF_8))) {
-      String line = in.readLine();
+      String line = BoundedLineReader.readLine(in, 5_000_000);
       while (line != null) {
         result.add(line);
-        line = in.readLine();
+        line = BoundedLineReader.readLine(in, 5_000_000);
       }
     }
     return result;

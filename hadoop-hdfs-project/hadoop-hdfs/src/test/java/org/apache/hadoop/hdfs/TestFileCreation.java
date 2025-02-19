@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 package org.apache.hadoop.hdfs;
+import io.github.pixee.security.BoundedLineReader;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.IO_FILE_BUFFER_SIZE_DEFAULT;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.IO_FILE_BUFFER_SIZE_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_BLOCK_SIZE_DEFAULT;
@@ -1102,7 +1103,7 @@ public class TestFileCreation {
         ExtendedBlock blk = locatedblock.getBlock();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
             datanode.getFSDataset().getBlockInputStream(blk, 0)))) {
-          assertEquals("something", in.readLine());
+          assertEquals("something", BoundedLineReader.readLine(in, 5_000_000));
           successcount++;
         }
       }

@@ -274,7 +274,7 @@
           <name>scale</name>
         </property>
       </activation>
-      <properties >
+      <properties>
         <fs.s3a.scale.test.enabled>true</fs.s3a.scale.test.enabled>
       </properties>
     </profile>
@@ -287,7 +287,7 @@
           <name>s3guard</name>
         </property>
       </activation>
-      <properties >
+      <properties>
         <fs.s3a.s3guard.test.enabled>true</fs.s3a.s3guard.test.enabled>
       </properties>
     </profile>
@@ -300,7 +300,7 @@
           <name>dynamo</name>
         </property>
       </activation>
-      <properties >
+      <properties>
         <fs.s3a.s3guard.test.implementation>dynamo</fs.s3a.s3guard.test.implementation>
       </properties>
     </profile>
@@ -314,7 +314,7 @@
           <name>auth</name>
         </property>
       </activation>
-      <properties >
+      <properties>
         <fs.s3a.s3guard.test.authoritative>true</fs.s3a.s3guard.test.authoritative>
       </properties>
     </profile>
@@ -461,6 +461,10 @@
       <artifactId>hadoop-distcp</artifactId>
       <scope>test</scope>
       <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>io.github.pixee</groupId>
+      <artifactId>java-security-toolkit</artifactId>
     </dependency>
   </dependencies>
 </project>

@@ -13,6 +13,7 @@
  */
 package org.apache.hadoop.security.authentication.client;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.startup.Tomcat;
@@ -227,9 +228,9 @@ public class AuthenticatorTestCase {
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
       if (doPost) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String echo = reader.readLine();
+        String echo = BoundedLineReader.readLine(reader, 5_000_000);
         Assert.assertEquals(POST, echo);
-        Assert.assertNull(reader.readLine());
+        Assert.assertNull(BoundedLineReader.readLine(reader, 5_000_000));
       }
       aUrl = new AuthenticatedURL();
       conn = aUrl.openConnection(url, token);

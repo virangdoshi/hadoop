@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 
 /**
@@ -37,7 +38,7 @@ public class FailApp
 
     // Consume all input (to make sure streaming will still count this
     // task as failed even if all input was consumed).
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       System.out.println(line);
     }
 

@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.timelineservice.security;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -289,7 +290,7 @@ public class TestTimelineAuthFilterForV2 {
     String strLine;
     try {
       reader = new BufferedReader(new FileReader(entityFile));
-      while ((strLine = reader.readLine()) != null) {
+      while ((strLine = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         if (strLine.trim().length() > 0) {
           return FileSystemTimelineReaderImpl.
               getTimelineRecordFromJSON(strLine.trim(), TimelineEntity.class);

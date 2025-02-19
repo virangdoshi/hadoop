@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 
 import org.apache.hadoop.streaming.Environment;
@@ -87,7 +88,7 @@ public class TrApp
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     String line;
 
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       String out = line.replace(find, replace);
       System.out.println(out);
       System.err.println("reporter:counter:UserCounters,InputLines,1");

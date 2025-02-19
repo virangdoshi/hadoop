@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.client.cli;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -1206,7 +1207,7 @@ public class TestLogsCLI {
       reader = new BufferedReader(new InputStreamReader(
           fs.open(containerPath)));
       String tmp;
-      while ((tmp = reader.readLine()) != null) {
+      while ((tmp = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         inputLine.append(tmp);
       }
       return inputLine.toString();

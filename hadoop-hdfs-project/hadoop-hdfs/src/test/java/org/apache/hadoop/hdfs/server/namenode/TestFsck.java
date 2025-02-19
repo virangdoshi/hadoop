@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.apache.hadoop.hdfs.MiniDFSCluster.HDFS_MINIDFS_BASEDIR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -258,16 +259,16 @@ public class TestFsck {
       // one extra getfileinfo stems from resolving the path
       //
       for (int i = 0; i < 2; i++) {
-        line = reader.readLine();
+        line = BoundedLineReader.readLine(reader, 5_000_000);
         assertNotNull(line);
         assertTrue("Expected getfileinfo event not found in audit log",
             GET_FILE_INFO_PATTERN.matcher(line).matches());
       }
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertNotNull(line);
       assertTrue("Expected fsck event not found in audit log", FSCK_PATTERN
           .matcher(line).matches());
-      assertNull("Unexpected event in audit log", reader.readLine());
+      assertNull("Unexpected event in audit log", BoundedLineReader.readLine(reader, 5_000_000));
     } finally {
       // Close the reader and remove the appender to release the audit log file
       // handle after verifying the content of the file.

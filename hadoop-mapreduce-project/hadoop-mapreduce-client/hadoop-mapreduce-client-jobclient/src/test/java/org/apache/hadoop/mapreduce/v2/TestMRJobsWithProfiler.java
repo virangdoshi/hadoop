@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapreduce.v2;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 import java.util.*;
 
@@ -196,7 +197,7 @@ public class TestMRJobsWithProfiler {
         final BufferedReader br = new BufferedReader(
           new InputStreamReader(localFs.open(fileStatus.getPath())));
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
           final Matcher m = taskPattern.matcher(line);
           if (m.matches()) {
             // found Task done message
@@ -222,7 +223,7 @@ public class TestMRJobsWithProfiler {
           // verify profile.out
           final BufferedReader br = new BufferedReader(new InputStreamReader(
             localFs.open(profilePath)));
-          final String line = br.readLine();
+          final String line = BoundedLineReader.readLine(br, 5_000_000);
           Assert.assertTrue("No hprof content found!",
             line !=null && line.startsWith("JAVA PROFILE"));
           br.close();
@@ -240,7 +241,7 @@ public class TestMRJobsWithProfiler {
             localFs.open(stdoutPath)));
           boolean flatProfFound = false;
           String line;
-          while ((line = br.readLine()) != null) {
+          while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
             if (line.startsWith("Flat profile")) {
               flatProfFound = true;
               break;

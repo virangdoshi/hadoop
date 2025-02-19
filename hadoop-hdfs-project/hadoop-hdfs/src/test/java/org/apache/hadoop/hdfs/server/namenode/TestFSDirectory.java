@@ -19,6 +19,7 @@
 package org.apache.hadoop.hdfs.server.namenode;
 
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -128,10 +129,10 @@ public class TestFSDirectory {
 
     final BufferedReader in = new BufferedReader(new StringReader(b1.toString()));
     
-    String line = in.readLine();
+    String line = BoundedLineReader.readLine(in, 5_000_000);
     checkClassName(line);
 
-    for(; (line = in.readLine()) != null; ) {
+    for(; (line = BoundedLineReader.readLine(in, 5_000_000)) != null; ) {
       line = line.trim();
       if (!line.isEmpty() && !line.contains("snapshot")) {
         assertTrue("line=" + line,

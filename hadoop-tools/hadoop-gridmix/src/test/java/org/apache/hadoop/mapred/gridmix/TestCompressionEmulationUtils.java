@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapred.gridmix;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -127,7 +128,7 @@ public class TestCompressionEmulationUtils {
         CompressionEmulationUtil
           .getPossiblyDecompressedInputStream(status.getPath(), conf, 0);
       BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-      String line = reader.readLine();
+      String line = BoundedLineReader.readLine(reader, 5_000_000);
       if (line != null) {
         long lineSize = line.getBytes().length;
         if (lineSize > maxLineSize) {
@@ -137,7 +138,7 @@ public class TestCompressionEmulationUtils {
           for (String word : line.split("\\s")) {
             size += word.getBytes().length;
           }
-          line = reader.readLine();
+          line = BoundedLineReader.readLine(reader, 5_000_000);
         }
       }
       reader.close();
@@ -455,7 +456,7 @@ public class TestCompressionEmulationUtils {
       CompressionEmulationUtil
         .getPossiblyDecompressedInputStream(compressedFile, conf, 0);
     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-    String readLine = reader.readLine();
+    String readLine = BoundedLineReader.readLine(reader, 5_000_000);
     assertEquals("Compression/Decompression error", inputLine, readLine);
     reader.close();
   }

@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -257,7 +258,7 @@ public class SysInfoLinux extends SysInfo {
     Matcher mat;
 
     try {
-      String str = in.readLine();
+      String str = BoundedLineReader.readLine(in, 5_000_000);
       while (str != null) {
         mat = PROCFS_MEMFILE_FORMAT.matcher(str);
         if (mat.find()) {
@@ -281,7 +282,7 @@ public class SysInfoLinux extends SysInfo {
             hugePageSize = Long.parseLong(mat.group(2));
           }
         }
-        str = in.readLine();
+        str = BoundedLineReader.readLine(in, 5_000_000);
       }
     } catch (IOException io) {
       LOG.warn("Error reading the stream " + io);
@@ -328,7 +329,7 @@ public class SysInfoLinux extends SysInfo {
       numProcessors = 0;
       numCores = 1;
       String currentPhysicalId = "";
-      String str = in.readLine();
+      String str = BoundedLineReader.readLine(in, 5_000_000);
       while (str != null) {
         mat = PROCESSOR_FORMAT.matcher(str);
         if (mat.find()) {
@@ -347,7 +348,7 @@ public class SysInfoLinux extends SysInfo {
           coreIdSet.add(currentPhysicalId + " " + str);
           numCores = coreIdSet.size();
         }
-        str = in.readLine();
+        str = BoundedLineReader.readLine(in, 5_000_000);
       }
     } catch (IOException io) {
       LOG.warn("Error reading the stream " + io);
@@ -385,7 +386,7 @@ public class SysInfoLinux extends SysInfo {
 
     Matcher mat;
     try {
-      String str = in.readLine();
+      String str = BoundedLineReader.readLine(in, 5_000_000);
       while (str != null) {
         mat = CPU_TIME_FORMAT.matcher(str);
         if (mat.find()) {
@@ -397,7 +398,7 @@ public class SysInfoLinux extends SysInfo {
               getCurrentTime());
           break;
         }
-        str = in.readLine();
+        str = BoundedLineReader.readLine(in, 5_000_000);
       }
     } catch (IOException io) {
       LOG.warn("Error reading the stream " + io);
@@ -438,7 +439,7 @@ public class SysInfoLinux extends SysInfo {
 
     Matcher mat;
     try {
-      String str = in.readLine();
+      String str = BoundedLineReader.readLine(in, 5_000_000);
       while (str != null) {
         mat = PROCFS_NETFILE_FORMAT.matcher(str);
         if (mat.find()) {
@@ -446,13 +447,13 @@ public class SysInfoLinux extends SysInfo {
 
           // ignore loopback interfaces
           if (mat.group(1).equals("lo")) {
-            str = in.readLine();
+            str = BoundedLineReader.readLine(in, 5_000_000);
             continue;
           }
           numNetBytesRead += Long.parseLong(mat.group(2));
           numNetBytesWritten += Long.parseLong(mat.group(10));
         }
-        str = in.readLine();
+        str = BoundedLineReader.readLine(in, 5_000_000);
       }
     } catch (IOException io) {
       LOG.warn("Error reading the stream " + io);
@@ -491,7 +492,7 @@ public class SysInfoLinux extends SysInfo {
 
     Matcher mat;
     try {
-      String str = in.readLine();
+      String str = BoundedLineReader.readLine(in, 5_000_000);
       while (str != null) {
         mat = PROCFS_DISKSFILE_FORMAT.matcher(str);
         if (mat.find()) {
@@ -499,7 +500,7 @@ public class SysInfoLinux extends SysInfo {
           assert diskName != null;
           // ignore loop or ram partitions
           if (diskName.contains("loop") || diskName.contains("ram")) {
-            str = in.readLine();
+            str = BoundedLineReader.readLine(in, 5_000_000);
             continue;
           }
 
@@ -522,7 +523,7 @@ public class SysInfoLinux extends SysInfo {
           numDisksBytesRead += Long.parseLong(sectorsRead) * sectorSize;
           numDisksBytesWritten += Long.parseLong(sectorsWritten) * sectorSize;
         }
-        str = in.readLine();
+        str = BoundedLineReader.readLine(in, 5_000_000);
       }
     } catch (IOException e) {
       LOG.warn("Error reading the stream " + procfsDisksFile, e);
@@ -559,7 +560,7 @@ public class SysInfoLinux extends SysInfo {
 
     Matcher mat;
     try {
-      String str = in.readLine();
+      String str = BoundedLineReader.readLine(in, 5_000_000);
       while (str != null) {
         mat = PROCFS_DISKSECTORFILE_FORMAT.matcher(str);
         if (mat.find()) {
@@ -568,7 +569,7 @@ public class SysInfoLinux extends SysInfo {
             return Integer.parseInt(secSize);
           }
         }
-        str = in.readLine();
+        str = BoundedLineReader.readLine(in, 5_000_000);
       }
       return defSector;
     } catch (IOException|NumberFormatException e) {

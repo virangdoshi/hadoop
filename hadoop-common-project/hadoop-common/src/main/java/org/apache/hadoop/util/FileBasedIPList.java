@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +95,7 @@ public class FileBasedIPList implements IPList {
               BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             List<String> lines = new ArrayList<String>();
             String line = null;
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(bufferedReader, 5_000_000)) != null) {
               lines.add(line);
             }
             if (LOG.isDebugEnabled()) {

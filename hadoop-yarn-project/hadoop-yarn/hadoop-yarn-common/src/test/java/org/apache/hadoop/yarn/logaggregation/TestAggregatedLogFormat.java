@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.logaggregation;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
@@ -340,7 +341,7 @@ public class TestAggregatedLogFormat {
             .toUri().getRawPath())));
     String line;
     StringBuffer sb = new StringBuffer("");
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       LOG.info(line);
       sb.append(line);
     }

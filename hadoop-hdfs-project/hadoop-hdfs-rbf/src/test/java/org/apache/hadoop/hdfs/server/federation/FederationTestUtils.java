@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.federation;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -276,7 +277,7 @@ public final class FederationTestUtils {
     StringBuilder data = new StringBuilder();
     String line;
 
-    while ((line = bufferedReader.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(bufferedReader, 5_000_000)) != null) {
       data.append(line);
     }
 

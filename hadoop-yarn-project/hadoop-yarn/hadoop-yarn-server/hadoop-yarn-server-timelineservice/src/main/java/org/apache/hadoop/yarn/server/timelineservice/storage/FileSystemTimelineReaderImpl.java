@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.timelineservice.storage;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -255,9 +256,9 @@ public class FileSystemTimelineReaderImpl extends AbstractService
   private static TimelineEntity readEntityFromFile(BufferedReader reader)
       throws IOException {
     TimelineEntity entity =
-        getTimelineRecordFromJSON(reader.readLine(), TimelineEntity.class);
+        getTimelineRecordFromJSON(BoundedLineReader.readLine(reader, 5_000_000), TimelineEntity.class);
     String entityStr = "";
-    while ((entityStr = reader.readLine()) != null) {
+    while ((entityStr = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
       if (entityStr.trim().isEmpty()) {
         continue;
       }

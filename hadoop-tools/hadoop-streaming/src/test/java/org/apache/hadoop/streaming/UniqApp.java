@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 import java.util.Date;
 
@@ -38,7 +39,7 @@ public class UniqApp
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     String line;
     String prevLine = null;
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       if (!line.equals(prevLine)) {
         System.out.println(header + line);
       }

@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.test;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -175,7 +176,7 @@ public class TestHFSTestCase extends HFSTestCase {
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    assertEquals(reader.readLine(), "foo");
+    assertEquals(BoundedLineReader.readLine(reader, 5_000_000), "foo");
     reader.close();
   }
 

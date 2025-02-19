@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.io.compress;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -794,7 +795,7 @@ public class TestCodec {
     InputStream is = fs.open(f);
     is = codec.createInputStream(is, decompressor);
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
-    String line = br.readLine();
+    String line = BoundedLineReader.readLine(br, 5_000_000);
     assertEquals("Didn't get the same message back!", msg, line);
     br.close();
   }
@@ -803,7 +804,7 @@ public class TestCodec {
     BufferedReader r = new BufferedReader(new InputStreamReader(
         new GZIPInputStream(new FileInputStream(filename))));
     try {
-      String line = r.readLine();
+      String line = BoundedLineReader.readLine(r, 5_000_000);
       assertEquals("Got invalid line back from " + filename, msg, line);
     } finally {
       r.close();
