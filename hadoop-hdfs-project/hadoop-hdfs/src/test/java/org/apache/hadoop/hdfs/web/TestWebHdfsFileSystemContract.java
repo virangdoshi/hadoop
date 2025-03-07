@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.hdfs.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -164,8 +166,8 @@ public class TestWebHdfsFileSystemContract extends FileSystemContractBaseTest {
     //replace query with mix case letters
     final URL url = webhdfs.toUrl(op, p);
     WebHdfsFileSystem.LOG.info("url      = " + url);
-    final URL replaced = new URL(url.toString().replace(op.toQueryString(),
-        "Op=mkDIrs"));
+    final URL replaced = Urls.create(url.toString().replace(op.toQueryString(),
+        "Op=mkDIrs"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     WebHdfsFileSystem.LOG.info("replaced = " + replaced);
 
     //connect with the replaced URL.
@@ -482,7 +484,7 @@ public class TestWebHdfsFileSystemContract extends FileSystemContractBaseTest {
       WebHdfsFileSystem.LOG.info("modified = " + modified);
 
       //connect to datanode
-      conn = (HttpURLConnection)new URL(modified).openConnection();
+      conn = (HttpURLConnection)Urls.create(modified, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
       conn.setRequestMethod(op.getType().toString());
       conn.setDoOutput(op.getDoOutput());
       conn.connect();
@@ -523,7 +525,7 @@ public class TestWebHdfsFileSystemContract extends FileSystemContractBaseTest {
         conn.disconnect();
       }
 
-      conn = (HttpURLConnection)new URL(redirect).openConnection();
+      conn = (HttpURLConnection)Urls.create(redirect, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
       conn.setRequestMethod(op.getType().toString());
       conn.setDoOutput(op.getDoOutput());
       try {
@@ -565,7 +567,7 @@ public class TestWebHdfsFileSystemContract extends FileSystemContractBaseTest {
       WebHdfsFileSystem.LOG.info("modified = " + modified);
 
       //connect to datanode
-      conn = (HttpURLConnection)new URL(modified).openConnection();
+      conn = (HttpURLConnection)Urls.create(modified, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
       conn.setRequestMethod(op.getType().toString());
       conn.setDoOutput(op.getDoOutput());
       conn.connect();

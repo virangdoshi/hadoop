@@ -29,6 +29,8 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.test.framework.WebAppDescriptor;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -814,7 +816,7 @@ public class TestNMWebServices extends JerseyTestBase {
   private static String getRedirectURL(String url) {
     String redirectUrl = null;
     try {
-      HttpURLConnection conn = (HttpURLConnection) new URL(url)
+      HttpURLConnection conn = (HttpURLConnection) Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
           .openConnection();
       // do not automatically follow the redirection
       // otherwise we get too many redirections exception

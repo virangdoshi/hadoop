@@ -17,6 +17,8 @@
 
 package org.apache.hadoop.hdfs.server.datanode.web;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hdfs.HdfsConfiguration;
@@ -94,7 +96,7 @@ public class TestDatanodeHttpXFrame {
   private static HttpURLConnection getConn(MiniDFSCluster dfsCluster)
       throws IOException {
     DataNode datanode = dfsCluster.getDataNodes().get(0);
-    URL newURL = new URL("http://localhost:" + datanode.getInfoPort());
+    URL newURL = Urls.create("http://localhost:" + datanode.getInfoPort(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) newURL.openConnection();
     conn.connect();
     return conn;

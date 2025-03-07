@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.http.HttpStatus;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
@@ -61,8 +63,8 @@ public class TestHttpServerLogs extends HttpServerFunctionalTest {
     conf.setBoolean(
         CommonConfigurationKeysPublic.HADOOP_HTTP_LOGS_ENABLED, true);
     startServer(conf);
-    URL url = new URL("http://"
-        + NetUtils.getHostPortString(server.getConnectorAddress(0)) + "/logs");
+    URL url = Urls.create("http://"
+        + NetUtils.getHostPortString(server.getConnectorAddress(0)) + "/logs", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
     assertEquals(HttpStatus.SC_OK, conn.getResponseCode());
   }
@@ -73,7 +75,7 @@ public class TestHttpServerLogs extends HttpServerFunctionalTest {
     conf.setBoolean(
         CommonConfigurationKeysPublic.HADOOP_HTTP_LOGS_ENABLED, false);
     startServer(conf);
-    URL url = new URL(baseUrl + "/logs");
+    URL url = Urls.create(baseUrl + "/logs", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
     assertEquals(HttpStatus.SC_NOT_FOUND, conn.getResponseCode());
   }

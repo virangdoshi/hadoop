@@ -27,6 +27,8 @@ import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.test.framework.WebAppDescriptor;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -941,7 +943,7 @@ public class TestAHSWebServices extends JerseyTestBase {
   private static String getRedirectURL(String url) {
     String redirectUrl = null;
     try {
-      HttpURLConnection conn = (HttpURLConnection) new URL(url)
+      HttpURLConnection conn = (HttpURLConnection) Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
           .openConnection();
       // do not automatically follow the redirection
       // otherwise we get too many redirections exception

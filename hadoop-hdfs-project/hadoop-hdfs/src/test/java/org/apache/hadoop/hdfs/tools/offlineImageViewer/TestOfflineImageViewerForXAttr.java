@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.tools.offlineImageViewer;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -117,8 +119,8 @@ public class TestOfflineImageViewerForXAttr {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
 
-      URL url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/dir1/?op=LISTXATTRS");
+      URL url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/dir1/?op=LISTXATTRS", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -143,8 +145,8 @@ public class TestOfflineImageViewerForXAttr {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
 
-      URL url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/dir1/?op=GETXATTRS");
+      URL url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/dir1/?op=GETXATTRS", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -167,8 +169,8 @@ public class TestOfflineImageViewerForXAttr {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
 
-      URL url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=attr8");
+      URL url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=attr8", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -176,8 +178,8 @@ public class TestOfflineImageViewerForXAttr {
       assertEquals(HttpURLConnection.HTTP_BAD_REQUEST,
           connection.getResponseCode());
 
-      url = new URL("http://localhost:" + port
-          + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=user.attr1");
+      url = Urls.create("http://localhost:" + port
+          + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=user.attr1", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -196,10 +198,9 @@ public class TestOfflineImageViewerForXAttr {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
 
-      URL url = new URL(
-          "http://localhost:"
+      URL url = Urls.create("http://localhost:"
               + port
-              + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=USER.attr1&encoding=TEXT");
+              + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=USER.attr1&encoding=TEXT", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();
@@ -249,10 +250,9 @@ public class TestOfflineImageViewerForXAttr {
       viewer.initServer(originalFsimage.getAbsolutePath());
       int port = viewer.getPort();
 
-      URL url = new URL(
-          "http://localhost:"
+      URL url = Urls.create("http://localhost:"
               + port
-              + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=user.notpresent&encoding=TEXT");
+              + "/webhdfs/v1/dir1/?op=GETXATTRS&xattr.name=user.notpresent&encoding=TEXT", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();

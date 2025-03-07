@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.tools.offlineImageViewer;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -202,8 +204,8 @@ public class TestOfflineImageViewerForAcl {
       assertEquals(writtenAcls.get("/withSeveralAcls"), acl);
 
       // GETACLSTATUS operation to a invalid path
-      URL url = new URL("http://localhost:" + port +
-          "/webhdfs/v1/invalid/?op=GETACLSTATUS");
+      URL url = Urls.create("http://localhost:" + port +
+          "/webhdfs/v1/invalid/?op=GETACLSTATUS", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
       connection.connect();

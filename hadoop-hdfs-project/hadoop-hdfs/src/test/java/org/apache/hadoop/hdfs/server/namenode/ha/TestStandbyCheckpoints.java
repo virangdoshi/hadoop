@@ -21,6 +21,8 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.util.Collections;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -571,9 +573,9 @@ public class TestStandbyCheckpoints {
 
     // Get /jmx of the standby NN web UI, which will cause the FSNS read lock to
     // be taken.
-    String pageContents = DFSTestUtil.urlGet(new URL("http://" +
+    String pageContents = DFSTestUtil.urlGet(Urls.create("http://" +
         nns[1].getHttpAddress().getHostName() + ":" +
-        nns[1].getHttpAddress().getPort() + "/jmx"));
+        nns[1].getHttpAddress().getPort() + "/jmx", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertTrue(pageContents.contains("NumLiveDataNodes"));
     
     // Make sure that the checkpoint is still going on, implying that the client

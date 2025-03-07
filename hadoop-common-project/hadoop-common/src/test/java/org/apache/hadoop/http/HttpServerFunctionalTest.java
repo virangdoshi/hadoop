@@ -19,6 +19,8 @@
 
 package org.apache.hadoop.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.net.NetUtils;
 import org.apache.hadoop.security.authorize.AccessControlList;
 import org.junit.Assert;
@@ -245,8 +247,8 @@ public class HttpServerFunctionalTest extends Assert {
   public static URL getServerURL(HttpServer2 server)
       throws MalformedURLException {
     assertNotNull("No server", server);
-    return new URL("http://"
-        + NetUtils.getHostPortString(server.getConnectorAddress(0)));
+    return Urls.create("http://"
+        + NetUtils.getHostPortString(server.getConnectorAddress(0)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   /**

@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.yarn.client.cli;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -800,8 +802,7 @@ public class TopCLI extends YarnCLI {
         }
       }
     } else {
-      url = new URL(
-          WebAppUtils.getRMWebAppURLWithScheme(conf) + CLUSTER_INFO_URL);
+      url = Urls.create(WebAppUtils.getRMWebAppURLWithScheme(conf) + CLUSTER_INFO_URL, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
     return url;
   }
@@ -815,12 +816,12 @@ public class TopCLI extends YarnCLI {
   @VisibleForTesting
   public URL getHAClusterUrl(Configuration conf, String rmhid)
       throws MalformedURLException {
-    return new URL(WebAppUtils.getHttpSchemePrefix(conf)
+    return Urls.create(WebAppUtils.getHttpSchemePrefix(conf)
         + WebAppUtils.getResolvedRemoteRMWebAppURLWithoutScheme(conf,
             YarnConfiguration.useHttps(conf) ? Policy.HTTPS_ONLY
                 : Policy.HTTP_ONLY,
             rmhid)
-        + CLUSTER_INFO_URL);
+        + CLUSTER_INFO_URL, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   private URLConnection connect(URL url) throws Exception {

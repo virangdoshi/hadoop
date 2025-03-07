@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.federation.router;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,7 +69,7 @@ public final class FederationUtil {
         host = webAddressSplit[0];
         port = Integer.parseInt(webAddressSplit[1]);
       }
-      URL jmxURL = new URL("http", host, port, "/jmx?qry=" + beanQuery);
+      URL jmxURL = Urls.create("http", host, port, "/jmx?qry=" + beanQuery, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       URLConnection conn = jmxURL.openConnection();
       conn.setConnectTimeout(5 * 1000);
       conn.setReadTimeout(5 * 1000);

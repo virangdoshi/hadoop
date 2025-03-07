@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.blockmanagement;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -121,8 +123,8 @@ public class TestBlockStatsMXBean {
   @Test
   @SuppressWarnings("unchecked")
   public void testStorageTypeStatsJMX() throws Exception {
-    URL baseUrl = new URL (cluster.getHttpUri(0));
-    String result = readOutput(new URL(baseUrl, "/jmx"));
+    URL baseUrl = Urls.create(cluster.getHttpUri(0), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+    String result = readOutput(Urls.create(baseUrl, "/jmx", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 
     Map<String, Object> stat = (Map<String, Object>) JSON.parse(result);
     Object[] beans =(Object[]) stat.get("beans");

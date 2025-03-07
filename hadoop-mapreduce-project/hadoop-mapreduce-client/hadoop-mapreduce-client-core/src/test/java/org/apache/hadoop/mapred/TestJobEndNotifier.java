@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -110,7 +112,7 @@ public class TestJobEndNotifier extends TestCase {
     server.addServlet("fail", "/fail", FailServlet.class);
     server.start();
     int port = server.getConnectorAddress(0).getPort();
-    baseUrl = new URL("http://localhost:" + port + "/");
+    baseUrl = Urls.create("http://localhost:" + port + "/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
     JobEndServlet.calledTimes = 0;
     JobEndServlet.requestUri = null;

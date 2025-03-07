@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.metrics2.impl;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URL;
@@ -230,7 +232,7 @@ class MetricsConfig extends SubsetConfiguration {
         int i = 0;
         for (String jar : jars) {
           LOG.debug(jar);
-          urls[i++] = new URL(jar);
+          urls[i++] = Urls.create(jar, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         }
       }
       catch (Exception e) {

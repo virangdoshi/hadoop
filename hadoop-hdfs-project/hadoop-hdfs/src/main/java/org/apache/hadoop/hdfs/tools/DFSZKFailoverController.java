@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.tools;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_KEYTAB_FILE_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_KERBEROS_PRINCIPAL_KEY;
 import static org.apache.hadoop.util.ExitUtil.terminate;
@@ -250,7 +252,7 @@ public class DFSZKFailoverController extends ZKFailoverController {
     try {
       String stacksUrl = DFSUtil.getInfoServer(localNNTarget.getAddress(),
           conf, DFSUtil.getHttpClientScheme(conf)) + "/stacks";
-      URL url = new URL(stacksUrl);
+      URL url = Urls.create(stacksUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = (HttpURLConnection)url.openConnection();
       conn.setReadTimeout(httpTimeOut);
       conn.setConnectTimeout(httpTimeOut);

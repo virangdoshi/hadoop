@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.fs.http.server;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.DelegationTokenRenewer;
@@ -120,8 +122,7 @@ public class TestHttpFSWithKerberos extends HFSTestCase {
     KerberosTestUtils.doAsClient(new Callable<Void>() {
       @Override
       public Void call() throws Exception {
-        URL url = new URL(TestJettyHelper.getJettyURL(),
-                          "/webhdfs/v1/?op=GETHOMEDIRECTORY");
+        URL url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=GETHOMEDIRECTORY", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         AuthenticatedURL aUrl = new AuthenticatedURL();
         AuthenticatedURL.Token aToken = new AuthenticatedURL.Token();
         HttpURLConnection conn = aUrl.openConnection(url, aToken);
@@ -138,8 +139,7 @@ public class TestHttpFSWithKerberos extends HFSTestCase {
   public void testInvalidadHttpFSAccess() throws Exception {
     createHttpFSServer();
 
-    URL url = new URL(TestJettyHelper.getJettyURL(),
-                      "/webhdfs/v1/?op=GETHOMEDIRECTORY");
+    URL url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=GETHOMEDIRECTORY", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     Assert.assertEquals(conn.getResponseCode(),
                         HttpURLConnection.HTTP_UNAUTHORIZED);
@@ -156,8 +156,7 @@ public class TestHttpFSWithKerberos extends HFSTestCase {
       @Override
       public Void call() throws Exception {
         //get delegation token doing SPNEGO authentication
-        URL url = new URL(TestJettyHelper.getJettyURL(),
-                          "/webhdfs/v1/?op=GETDELEGATIONTOKEN");
+        URL url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=GETDELEGATIONTOKEN", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         AuthenticatedURL aUrl = new AuthenticatedURL();
         AuthenticatedURL.Token aToken = new AuthenticatedURL.Token();
         HttpURLConnection conn = aUrl.openConnection(url, aToken);
@@ -171,39 +170,34 @@ public class TestHttpFSWithKerberos extends HFSTestCase {
           .get(DelegationTokenAuthenticator.DELEGATION_TOKEN_URL_STRING_JSON);
 
         //access httpfs using the delegation token
-        url = new URL(TestJettyHelper.getJettyURL(),
-                      "/webhdfs/v1/?op=GETHOMEDIRECTORY&delegation=" +
-                      tokenStr);
+        url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=GETHOMEDIRECTORY&delegation=" +
+                      tokenStr, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         conn = (HttpURLConnection) url.openConnection();
         Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
 
         //try to renew the delegation token without SPNEGO credentials
-        url = new URL(TestJettyHelper.getJettyURL(),
-                      "/webhdfs/v1/?op=RENEWDELEGATIONTOKEN&token=" + tokenStr);
+        url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=RENEWDELEGATIONTOKEN&token=" + tokenStr, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("PUT");
         Assert.assertEquals(conn.getResponseCode(),
                             HttpURLConnection.HTTP_UNAUTHORIZED);
 
         //renew the delegation token with SPNEGO credentials
-        url = new URL(TestJettyHelper.getJettyURL(),
-                      "/webhdfs/v1/?op=RENEWDELEGATIONTOKEN&token=" + tokenStr);
+        url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=RENEWDELEGATIONTOKEN&token=" + tokenStr, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         conn = aUrl.openConnection(url, aToken);
         conn.setRequestMethod("PUT");
         Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
 
         //cancel delegation token, no need for SPNEGO credentials
-        url = new URL(TestJettyHelper.getJettyURL(),
-                      "/webhdfs/v1/?op=CANCELDELEGATIONTOKEN&token=" +
-                      tokenStr);
+        url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=CANCELDELEGATIONTOKEN&token=" +
+                      tokenStr, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("PUT");
         Assert.assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
 
         //try to access httpfs with the canceled delegation token
-        url = new URL(TestJettyHelper.getJettyURL(),
-                      "/webhdfs/v1/?op=GETHOMEDIRECTORY&delegation=" +
-                      tokenStr);
+        url = Urls.create(TestJettyHelper.getJettyURL(), "/webhdfs/v1/?op=GETHOMEDIRECTORY&delegation=" +
+                      tokenStr, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         conn = (HttpURLConnection) url.openConnection();
         Assert.assertEquals(conn.getResponseCode(),
                             HttpURLConnection.HTTP_UNAUTHORIZED);

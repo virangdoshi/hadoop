@@ -13,6 +13,8 @@
  */
 package org.apache.hadoop.security.authentication.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.security.authentication.server.AuthenticationFilter;
 import org.apache.hadoop.security.authentication.server.PseudoAuthenticationHandler;
 import org.junit.Assert;
@@ -44,7 +46,7 @@ public class TestPseudoAuthenticator {
             getAuthenticationHandlerConfiguration(true));
     auth.start();
     try {
-      URL url = new URL(auth.getBaseURL());
+      URL url = Urls.create(auth.getBaseURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.connect();
       Assert.assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
@@ -60,7 +62,7 @@ public class TestPseudoAuthenticator {
             getAuthenticationHandlerConfiguration(false));
     auth.start();
     try {
-      URL url = new URL(auth.getBaseURL());
+      URL url = Urls.create(auth.getBaseURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.connect();
       Assert.assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, conn.getResponseCode());

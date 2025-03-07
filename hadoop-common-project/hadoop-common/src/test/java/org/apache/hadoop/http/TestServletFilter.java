@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -83,7 +85,7 @@ public class TestServletFilter extends HttpServerFunctionalTest {
   /** access a url, ignoring some IOException such as the page does not exist */
   static void access(String urlstring) throws IOException {
     LOG.warn("access " + urlstring);
-    URL url = new URL(urlstring);
+    URL url = Urls.create(urlstring, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     URLConnection connection = url.openConnection();
     connection.connect();
     

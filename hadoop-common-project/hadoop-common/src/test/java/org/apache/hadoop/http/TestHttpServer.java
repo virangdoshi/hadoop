@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configuration.IntegerRanges;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
@@ -173,7 +175,7 @@ public class TestHttpServer extends HttpServerFunctionalTest {
           try {
             start.await();
             assertEquals("a:b\nc:d\n",
-                         readOutput(new URL(baseUrl, "/echo?a=b&c=d")));
+                         readOutput(Urls.create(baseUrl, "/echo?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
             int serverThreads = server.webServer.getThreadPool().getThreads();
             assertTrue("More threads are started than expected, Server Threads count: "
                     + serverThreads, serverThreads <= MAX_THREADS);
@@ -192,35 +194,35 @@ public class TestHttpServer extends HttpServerFunctionalTest {
   
   @Test public void testEcho() throws Exception {
     assertEquals("a:b\nc:d\n", 
-                 readOutput(new URL(baseUrl, "/echo?a=b&c=d")));
+                 readOutput(Urls.create(baseUrl, "/echo?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
     assertEquals("a:b\nc&lt;:d\ne:&gt;\n", 
-                 readOutput(new URL(baseUrl, "/echo?a=b&c<=d&e=>")));    
+                 readOutput(Urls.create(baseUrl, "/echo?a=b&c<=d&e=>", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));    
   }
   
   /** Test the echo map servlet that uses getParameterMap. */
   @Test public void testEchoMap() throws Exception {
     assertEquals("a:b\nc:d\n", 
-                 readOutput(new URL(baseUrl, "/echomap?a=b&c=d")));
+                 readOutput(Urls.create(baseUrl, "/echomap?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
     assertEquals("a:b,&gt;\nc&lt;:d\n", 
-                 readOutput(new URL(baseUrl, "/echomap?a=b&c<=d&a=>")));
+                 readOutput(Urls.create(baseUrl, "/echomap?a=b&c<=d&a=>", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
   }
 
   @Test public void testLongHeader() throws Exception {
-    URL url = new URL(baseUrl, "/longheader");
+    URL url = Urls.create(baseUrl, "/longheader", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     testLongHeader(conn);
   }
 
   @Test public void testContentTypes() throws Exception {
     // Static CSS files should have text/css
-    URL cssUrl = new URL(baseUrl, "/static/test.css");
+    URL cssUrl = Urls.create(baseUrl, "/static/test.css", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection)cssUrl.openConnection();
     conn.connect();
     assertEquals(200, conn.getResponseCode());
     assertEquals("text/css", conn.getContentType());
 
     // Servlets should have text/plain with proper encoding by default
-    URL servletUrl = new URL(baseUrl, "/echo?a=b");
+    URL servletUrl = Urls.create(baseUrl, "/echo?a=b", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     conn = (HttpURLConnection)servletUrl.openConnection();
     conn.connect();
     assertEquals(200, conn.getResponseCode());
@@ -228,14 +230,14 @@ public class TestHttpServer extends HttpServerFunctionalTest {
 
     // We should ignore parameters for mime types - ie a parameter
     // ending in .css should not change mime type
-    servletUrl = new URL(baseUrl, "/echo?a=b.css");
+    servletUrl = Urls.create(baseUrl, "/echo?a=b.css", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     conn = (HttpURLConnection)servletUrl.openConnection();
     conn.connect();
     assertEquals(200, conn.getResponseCode());
     assertEquals("text/plain; charset=utf-8", conn.getContentType());
 
     // Servlets that specify text/html should get that content type
-    servletUrl = new URL(baseUrl, "/htmlcontent");
+    servletUrl = Urls.create(baseUrl, "/htmlcontent", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     conn = (HttpURLConnection)servletUrl.openConnection();
     conn.connect();
     assertEquals(200, conn.getResponseCode());
@@ -292,7 +294,7 @@ public class TestHttpServer extends HttpServerFunctionalTest {
       throws IOException {
     httpServer.start();
     URL newURL = getServerURL(httpServer);
-    URL url = new URL(newURL, "");
+    URL url = Urls.create(newURL, "", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     conn.connect();
     return conn;
@@ -361,7 +363,7 @@ public class TestHttpServer extends HttpServerFunctionalTest {
    */
   static int getHttpStatusCode(String urlstring, String userName)
       throws IOException {
-    URL url = new URL(urlstring + "?user.name=" + userName);
+    URL url = Urls.create(urlstring + "?user.name=" + userName, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     System.out.println("Accessing " + url + " as user " + userName);
     HttpURLConnection connection = (HttpURLConnection)url.openConnection();
     connection.connect();
@@ -495,7 +497,7 @@ public class TestHttpServer extends HttpServerFunctionalTest {
 
   @Test public void testJersey() throws Exception {
     LOG.info("BEGIN testJersey()");
-    final String js = readOutput(new URL(baseUrl, "/jersey/foo?op=bar"));
+    final String js = readOutput(Urls.create(baseUrl, "/jersey/foo?op=bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     final Map<String, Object> m = parse(js);
     LOG.info("m=" + m);
     assertEquals("foo", m.get(JerseyResource.PATH));
@@ -616,7 +618,7 @@ public class TestHttpServer extends HttpServerFunctionalTest {
 
   @Test
   public void testNoCacheHeader() throws Exception {
-    URL url = new URL(baseUrl, "/echo?a=b&c=d");
+    URL url = Urls.create(baseUrl, "/echo?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     assertEquals(HttpURLConnection.HTTP_OK, conn.getResponseCode());
     assertEquals("no-cache", conn.getHeaderField("Cache-Control"));

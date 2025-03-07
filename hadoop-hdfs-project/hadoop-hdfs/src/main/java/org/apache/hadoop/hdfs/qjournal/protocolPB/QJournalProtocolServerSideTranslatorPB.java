@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.qjournal.protocolPB;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.net.URL;
 
@@ -261,7 +263,7 @@ public class QJournalProtocolServerSideTranslatorPB implements QJournalProtocolP
     try {
       impl.acceptRecovery(convert(request.getReqInfo()),
           request.getStateToAccept(),
-          new URL(request.getFromURL()));
+          Urls.create(request.getFromURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
       return AcceptRecoveryResponseProto.getDefaultInstance();
     } catch (IOException e) {
       throw new ServiceException(e);
