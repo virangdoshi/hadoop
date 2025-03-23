@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapreduce;
 
+import java.nio.file.Files;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -239,7 +240,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
     job.setJobName("mr");
     job.setPriority(JobPriority.NORMAL);
 
-    File fcon = File.createTempFile("config", ".xml");
+    File fcon = Files.createTempFile("config", ".xml").toFile();
     FileSystem localFs = FileSystem.getLocal(conf);
     String fconUri = new Path(fcon.getAbsolutePath())
         .makeQualified(localFs.getUri(), localFs.getWorkingDirectory()).toUri()
@@ -390,7 +391,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
       }, out);
       assertEquals("Exit code", 0, exitCode);
       checkHistoryHumanOutput(jobId, out);
-      File outFile = File.createTempFile("myout", ".txt");
+      File outFile = Files.createTempFile("myout", ".txt").toFile();
       exitCode = runTool(conf, jc, new String[]{
           "-history",
           "all",
@@ -400,7 +401,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
       }, out);
       assertEquals("Exit code", 0, exitCode);
       checkHistoryHumanFileOutput(jobId, out, outFile);
-      outFile = File.createTempFile("myout", ".txt");
+      outFile = Files.createTempFile("myout", ".txt").toFile();
       exitCode = runTool(conf, jc, new String[]{
           "-history",
           "all",
@@ -429,7 +430,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
       }, out);
       assertEquals("Exit code", 0, exitCode);
       checkHistoryJSONOutput(jobId, out);
-      outFile = File.createTempFile("myout", ".txt");
+      outFile = Files.createTempFile("myout", ".txt").toFile();
       exitCode = runTool(conf, jc, new String[]{
           "-history",
           "all",
@@ -551,7 +552,7 @@ public class TestMRJobClient extends ClusterMapReduceTestCase {
     assertEquals("Exit code", -1, exitCode);
 
     // good arguments
-    File outFile = File.createTempFile("config", ".xml");
+    File outFile = Files.createTempFile("config", ".xml").toFile();
     exitCode = runTool(conf, jc, new String[] { "-config", jobId,
         outFile.toString()}, out);
     assertEquals("Exit code", 0, exitCode);

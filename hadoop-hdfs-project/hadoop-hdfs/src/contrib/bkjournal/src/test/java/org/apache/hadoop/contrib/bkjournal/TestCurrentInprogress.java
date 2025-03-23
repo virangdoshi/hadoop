@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.contrib.bkjournal;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -74,7 +75,7 @@ public class TestCurrentInprogress {
   @BeforeClass
   public static void setupZooKeeper() throws Exception {
     LOG.info("Starting ZK server");
-    zkTmpDir = File.createTempFile("zookeeper", "test");
+    zkTmpDir = Files.createTempFile("zookeeper", "test").toFile();
     zkTmpDir.delete();
     zkTmpDir.mkdir();
     try {

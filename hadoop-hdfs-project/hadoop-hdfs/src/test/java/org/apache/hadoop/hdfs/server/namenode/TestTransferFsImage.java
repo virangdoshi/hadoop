@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -162,7 +163,7 @@ public class TestTransferFsImage {
       File tmpDir = new File(new FileSystemTestHelper().getTestRootDir());
       tmpDir.mkdirs();
 
-      File mockImageFile = File.createTempFile("image", "", tmpDir);
+      File mockImageFile = Files.createTempFile(tmpDir.toPath(), "image", "").toFile();
       FileOutputStream imageFile = new FileOutputStream(mockImageFile);
       imageFile.write("data".getBytes());
       imageFile.close();

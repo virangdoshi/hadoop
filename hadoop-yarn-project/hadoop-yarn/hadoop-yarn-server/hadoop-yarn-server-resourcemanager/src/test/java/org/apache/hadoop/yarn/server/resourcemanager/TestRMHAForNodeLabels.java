@@ -19,6 +19,7 @@
 package org.apache.hadoop.yarn.server.resourcemanager;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class TestRMHAForNodeLabels extends RMHATestBase {
     super.setup();
     
     // Create directory for node label store 
-    File tempDir = File.createTempFile("nlb", ".tmp");
+    File tempDir = Files.createTempFile("nlb", ".tmp").toFile();
     tempDir.delete();
     tempDir.mkdirs();
     tempDir.deleteOnExit();

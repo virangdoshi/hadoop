@@ -20,6 +20,7 @@ package org.apache.hadoop.yarn.nodelabels;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class TestFileSystemNodeLabelsStore extends NodeLabelTestBase {
     conf = new Configuration();
     conf.setBoolean(YarnConfiguration.NODE_LABELS_ENABLED, true);
     conf.set(YarnConfiguration.FS_NODE_LABELS_STORE_IMPL_CLASS, storeClassName);
-    File tempDir = File.createTempFile("nlb", ".tmp");
+    File tempDir = Files.createTempFile("nlb", ".tmp").toFile();
     tempDir.delete();
     tempDir.mkdirs();
     tempDir.deleteOnExit();

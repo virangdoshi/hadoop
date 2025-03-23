@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.net;
 
+import java.nio.file.Files;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.NET_TOPOLOGY_TABLE_MAPPING_FILE_KEY;
 
 import static org.junit.Assert.assertEquals;
@@ -39,8 +40,8 @@ public class TestTableMapping {
 
   @Test
   public void testResolve() throws IOException {
-    File mapFile = File.createTempFile(getClass().getSimpleName() +
-        ".testResolve", ".txt");
+    File mapFile = Files.createTempFile(getClass().getSimpleName() +
+        ".testResolve", ".txt").toFile();
     Files.write(hostName1 + " /rack1\n" +
                 hostName2 + "\t/rack2\n", mapFile, Charsets.UTF_8);
     mapFile.deleteOnExit();
@@ -62,8 +63,8 @@ public class TestTableMapping {
 
   @Test
   public void testTableCaching() throws IOException {
-    File mapFile = File.createTempFile(getClass().getSimpleName() +
-        ".testTableCaching", ".txt");
+    File mapFile = Files.createTempFile(getClass().getSimpleName() +
+        ".testTableCaching", ".txt").toFile();
     Files.write(hostName1 + " /rack1\n" +
         hostName2 + "\t/rack2\n", mapFile, Charsets.UTF_8);
     mapFile.deleteOnExit();
@@ -126,8 +127,8 @@ public class TestTableMapping {
 
   @Test
   public void testClearingCachedMappings() throws IOException {
-    File mapFile = File.createTempFile(getClass().getSimpleName() +
-        ".testClearingCachedMappings", ".txt");
+    File mapFile = Files.createTempFile(getClass().getSimpleName() +
+        ".testClearingCachedMappings", ".txt").toFile();
     Files.write(hostName1 + " /rack1\n" +
                 hostName2 + "\t/rack2\n", mapFile, Charsets.UTF_8);
     mapFile.deleteOnExit();
@@ -164,8 +165,8 @@ public class TestTableMapping {
 
   @Test(timeout=60000)
   public void testBadFile() throws IOException {
-    File mapFile = File.createTempFile(getClass().getSimpleName() +
-        ".testBadFile", ".txt");
+    File mapFile = Files.createTempFile(getClass().getSimpleName() +
+        ".testBadFile", ".txt").toFile();
     Files.write("bad contents", mapFile, Charsets.UTF_8);
     mapFile.deleteOnExit();
     TableMapping mapping = new TableMapping();

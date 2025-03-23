@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.tools.mapred;
 
+import java.nio.file.Files;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
@@ -43,7 +44,7 @@ public class TestRetriableFileCopyCommand {
     OutputStream out = mock(OutputStream.class);
     doThrow(expectedEx).when(out).close();
 
-    File f = File.createTempFile(this.getClass().getSimpleName(), null);
+    File f = Files.createTempFile(this.getClass().getSimpleName(), null).toFile();
     f.deleteOnExit();
     CopyListingFileStatus stat = new CopyListingFileStatus(
         new FileStatus(1L, false, 1, 1024, 0, new Path(f.toURI())));

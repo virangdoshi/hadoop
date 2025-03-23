@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.swift.snative;
 
+import java.nio.file.Files;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -88,7 +89,7 @@ class SwiftNativeOutputStream extends OutputStream {
     if (!dir.mkdirs() && !dir.exists()) {
       throw new SwiftException("Cannot create Swift buffer directory: " + dir);
     }
-    File result = File.createTempFile("output-", ".tmp", dir);
+    File result = Files.createTempFile(dir.toPath(), "output-", ".tmp").toFile();
     result.deleteOnExit();
     return result;
   }

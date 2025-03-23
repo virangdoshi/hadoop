@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -204,7 +205,7 @@ public class RunJar {
 
     final File workDir;
     try {
-      workDir = File.createTempFile("hadoop-unjar", "", tmpDir);
+      workDir = Files.createTempFile(tmpDir.toPath(), "hadoop-unjar", "").toFile();
     } catch (IOException ioe) {
       // If user has insufficient perms to write to tmpDir, default
       // "Permission denied" message doesn't specify a filename.

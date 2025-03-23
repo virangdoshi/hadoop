@@ -17,6 +17,7 @@
  */
 
 package org.apache.hadoop.yarn.server.resourcemanager.nodelabels;
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -612,7 +613,7 @@ public class TestRMNodeLabelsManager extends NodeLabelTestBase {
   public void testcheckRemoveFromClusterNodeLabelsOfQueue() throws Exception {
     lmgr = new RMNodeLabelsManager();
     Configuration conf = new Configuration();
-    File tempDir = File.createTempFile("nlb", ".tmp");
+    File tempDir = Files.createTempFile("nlb", ".tmp").toFile();
     tempDir.delete();
     tempDir.mkdirs();
     tempDir.deleteOnExit();
@@ -710,7 +711,7 @@ public class TestRMNodeLabelsManager extends NodeLabelTestBase {
   public void testBackwardsCompatableMirror() throws Exception {
     lmgr = new RMNodeLabelsManager();
     Configuration conf = new Configuration();
-    File tempDir = File.createTempFile("nlb", ".tmp");
+    File tempDir = Files.createTempFile("nlb", ".tmp").toFile();
     tempDir.delete();
     tempDir.mkdirs();
     tempDir.deleteOnExit();

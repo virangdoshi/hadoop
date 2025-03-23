@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.Random;
@@ -85,7 +86,7 @@ public class TestBookKeeperConfiguration {
   public static void setupZooKeeper() throws Exception {
     // create a ZooKeeper server(dataDir, dataLogDir, port)
     LOG.info("Starting ZK server");
-    ZkTmpDir = File.createTempFile("zookeeper", "test");
+    ZkTmpDir = Files.createTempFile("zookeeper", "test").toFile();
     ZkTmpDir.delete();
     ZkTmpDir.mkdir();
 
