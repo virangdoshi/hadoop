@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.Newlines;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -100,10 +101,10 @@ public class StreamFile extends DfsServlet {
         StreamFile.sendPartialData(in, out, response, fileLen, ranges);
       } else {
         // No ranges, so send entire file
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + 
-                           rawFilename + "\"");
+        response.setHeader("Content-Disposition", Newlines.stripAll("attachment; filename=\"" + 
+                           rawFilename + "\""));
         response.setContentType("application/octet-stream");
-        response.setHeader(CONTENT_LENGTH, "" + fileLen);
+        response.setHeader(CONTENT_LENGTH, Newlines.stripAll("" + fileLen));
         StreamFile.copyFromOffset(in, out, 0L, fileLen);
       }
       in.close();
@@ -146,13 +147,13 @@ public class StreamFile extends DfsServlet {
       response.setContentLength(0);
       response.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
       response.setHeader("Content-Range",
-                InclusiveByteRange.to416HeaderRangeString(contentLength));
+                Newlines.stripAll(InclusiveByteRange.to416HeaderRangeString(contentLength)));
     } else {
       InclusiveByteRange singleSatisfiableRange = ranges.get(0);
       long singleLength = singleSatisfiableRange.getSize(contentLength);
       response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
       response.setHeader("Content-Range", 
-        singleSatisfiableRange.toHeaderRangeString(contentLength));
+        Newlines.stripAll(singleSatisfiableRange.toHeaderRangeString(contentLength)));
       copyFromOffset(in, out,
                      singleSatisfiableRange.getFirst(contentLength),
                      singleLength);

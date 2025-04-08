@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager.webapp;
 
+import io.github.pixee.security.Newlines;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -65,7 +66,7 @@ public class NMWebAppFilter extends GuiceContainer{
           "Redirecting to log server" + " : " + redirectPath;
       PrintWriter out = response.getWriter();
       out.println(redirectMsg);
-      response.setHeader("Location", redirectPath);
+      response.setHeader("Location", Newlines.stripAll(redirectPath));
       response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
       return;
     }

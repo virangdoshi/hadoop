@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.Newlines;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.hdfs.server.common.Util;
@@ -245,9 +246,9 @@ public class ImageServlet extends HttpServlet {
 
   public static void setFileNameHeaders(HttpServletResponse response,
       File file) {
-    response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" +
-        file.getName());
-    response.setHeader(HADOOP_IMAGE_EDITS_HEADER, file.getName());
+    response.setHeader(CONTENT_DISPOSITION, Newlines.stripAll("attachment; filename=" +
+        file.getName()));
+    response.setHeader(HADOOP_IMAGE_EDITS_HEADER, Newlines.stripAll(file.getName()));
   }
   
   /**
@@ -343,10 +344,10 @@ public class ImageServlet extends HttpServlet {
       File file) throws IOException {
     response.setHeader(
         Util.CONTENT_LENGTH,
-        String.valueOf(file.length()));
+        Newlines.stripAll(String.valueOf(file.length())));
     MD5Hash hash = MD5FileUtils.readStoredMd5ForFile(file);
     if (hash != null) {
-      response.setHeader(Util.MD5_HEADER, hash.toString());
+      response.setHeader(Util.MD5_HEADER, Newlines.stripAll(hash.toString()));
     }
   }
   
