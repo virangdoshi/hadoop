@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.client.cli;
 
+import io.github.pixee.security.SystemCommand;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -1208,7 +1209,7 @@ public class TopCLI extends YarnCLI {
 
   private String getCommandOutput(String[] command) throws IOException,
       InterruptedException {
-    Process p = Runtime.getRuntime().exec(command);
+    Process p = SystemCommand.runCommand(Runtime.getRuntime(), command);
     p.waitFor();
     byte[] output = IOUtils.toByteArray(p.getInputStream());
     return new String(output, "ASCII");

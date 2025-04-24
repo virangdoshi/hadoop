@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.security;
 
+import io.github.pixee.security.SystemCommand;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -219,8 +220,7 @@ public class ShellBasedIdMapping implements IdMappingServiceProvider {
     boolean updated = false;
     BufferedReader br = null;
     try {
-      Process process = Runtime.getRuntime().exec(
-          new String[] { "bash", "-c", command });
+      Process process = SystemCommand.runCommand(Runtime.getRuntime(), new String[] { "bash", "-c", command });
       br = new BufferedReader(
           new InputStreamReader(process.getInputStream(),
                                 Charset.defaultCharset()));
