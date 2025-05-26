@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -717,8 +718,8 @@ public class JHLogAnalyzer {
         // skip to the next job log start
         long processed = 0L;
         if(jobDelimiterPattern != null) {
-          for(String line = reader.readLine();
-                line != null; line = reader.readLine()) {
+          for(String line = BoundedLineReader.readLine(reader, 5_000_000);
+                line != null; line = BoundedLineReader.readLine(reader, 5_000_000)) {
             if((stm.getPos() - processed) > 100000) {
               processed = stm.getPos();
               reporter.setStatus("Processing " + filePath + " at " + processed);
@@ -776,8 +777,8 @@ public class JHLogAnalyzer {
     private String readLine(BufferedReader reader) throws IOException {
       resBuffer.setLength(0);
       reader.mark(maxJobDelimiterLineLength);
-      for(String line = reader.readLine();
-                line != null; line = reader.readLine()) {
+      for(String line = BoundedLineReader.readLine(reader, 5_000_000);
+                line != null; line = BoundedLineReader.readLine(reader, 5_000_000)) {
         if(isEndOfJobLog(line)) {
           if(resBuffer.length() == 0)
             resBuffer.append(line);
@@ -1093,7 +1094,7 @@ public class JHLogAnalyzer {
           lines = new BufferedReader(new InputStreamReader(in));
     
           String line;
-          while((line = lines.readLine()) != null) {
+          while((line = BoundedLineReader.readLine(lines, 5_000_000)) != null) {
             StringTokenizer tokens = new StringTokenizer(line, "\t*");
             String attr = tokens.nextToken();
             String dateTime = tokens.nextToken();

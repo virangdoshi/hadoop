@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -97,7 +98,7 @@ abstract class DistTool implements org.apache.hadoop.util.Tool {
     FileSystem fs = inputfile.getFileSystem(conf);
     try (BufferedReader input = new BufferedReader(new InputStreamReader(fs.open(inputfile),
             Charset.forName("UTF-8")))) {
-      for(String line; (line = input.readLine()) != null;) {
+      for(String line; (line = BoundedLineReader.readLine(input, 5_000_000)) != null;) {
         result.add(line);
       }
     }

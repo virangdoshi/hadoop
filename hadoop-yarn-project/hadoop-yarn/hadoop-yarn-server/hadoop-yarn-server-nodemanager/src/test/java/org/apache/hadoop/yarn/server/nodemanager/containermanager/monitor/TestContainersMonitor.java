@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager.containermanager.monitor;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -296,11 +297,11 @@ public class TestContainersMonitor extends BaseContainerManagerTest {
     // Now verify the contents of the file
     BufferedReader reader =
         new BufferedReader(new FileReader(processStartFile));
-    Assert.assertEquals("Hello World!", reader.readLine());
+    Assert.assertEquals("Hello World!", BoundedLineReader.readLine(reader, 5_000_000));
     // Get the pid of the process
-    String pid = reader.readLine().trim();
+    String pid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     BaseContainerManagerTest.waitForContainerState(containerManager, cId,
         ContainerState.COMPLETE, 60);

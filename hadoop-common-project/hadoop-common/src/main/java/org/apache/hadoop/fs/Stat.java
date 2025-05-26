@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -115,7 +116,7 @@ public class Stat extends Shell {
     // Reset stat
     stat = null;
 
-    String line = lines.readLine();
+    String line = BoundedLineReader.readLine(lines, 5_000_000);
     if (line == null) {
       throw new IOException("Unable to stat path: " + original);
     }

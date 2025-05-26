@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.namenode.snapshot;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -203,8 +204,8 @@ public class SnapshotTestHelper {
     try {
       String line1 = "";
       String line2 = "";
-      while ((line1 = reader1.readLine()) != null
-          && (line2 = reader2.readLine()) != null) {
+      while ((line1 = BoundedLineReader.readLine(reader1, 5_000_000)) != null
+          && (line2 = BoundedLineReader.readLine(reader2, 5_000_000)) != null) {
         if (print) {
           System.out.println();
           System.out.println("1) " + line1);
@@ -240,8 +241,8 @@ public class SnapshotTestHelper {
         }
         assertEquals(line1.trim(), line2.trim());
       }
-      Assert.assertNull(reader1.readLine());
-      Assert.assertNull(reader2.readLine());
+      Assert.assertNull(BoundedLineReader.readLine(reader1, 5_000_000));
+      Assert.assertNull(BoundedLineReader.readLine(reader2, 5_000_000));
     } finally {
       reader1.close();
       reader2.close();
@@ -253,7 +254,7 @@ public class SnapshotTestHelper {
     System.out.println("File: " + f);
     BufferedReader in = new BufferedReader(new FileReader(f));
     try {
-      for(String line; (line = in.readLine()) != null; ) {
+      for(String line; (line = BoundedLineReader.readLine(in, 5_000_000)) != null; ) {
         System.out.println(line);
       }
     } finally {

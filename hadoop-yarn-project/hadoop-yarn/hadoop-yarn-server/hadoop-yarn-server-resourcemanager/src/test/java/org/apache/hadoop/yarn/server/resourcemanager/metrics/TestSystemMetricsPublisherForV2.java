@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.resourcemanager.metrics;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -311,7 +312,7 @@ public class TestSystemMetricsPublisherForV2 {
     long metricsCount = 0;
     try {
       reader = new BufferedReader(new FileReader(entityFile));
-      while ((strLine = reader.readLine()) != null) {
+      while ((strLine = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         if (strLine.trim().length() > 0) {
           TimelineEntity entity = FileSystemTimelineReaderImpl.
               getTimelineRecordFromJSON(strLine.trim(), TimelineEntity.class);

@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.yarn.server.nodemanager.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +63,7 @@ public class ProcessIdFileReader {
         bufReader = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 
         while (true) {
-          String line = bufReader.readLine();
+          String line = BoundedLineReader.readLine(bufReader, 5_000_000);
           if (line == null) {
             break;
           }

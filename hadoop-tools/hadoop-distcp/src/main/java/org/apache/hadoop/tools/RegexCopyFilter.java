@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
@@ -67,7 +68,7 @@ public class RegexCopyFilter extends CopyFilter {
       reader = new BufferedReader(new InputStreamReader(is,
           Charset.forName("UTF-8")));
       String line;
-      while ((line = reader.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         Pattern pattern = Pattern.compile(line);
         filters.add(pattern);
       }

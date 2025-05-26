@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.ha;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
@@ -81,7 +82,7 @@ class StreamPumper {
         stream, StandardCharsets.UTF_8);
     BufferedReader br = new BufferedReader(inputStreamReader);
     String line = null;
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
       if (type == StreamType.STDOUT) {
         log.info(logPrefix + ": " + line);
       } else {

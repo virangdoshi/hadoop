@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -1597,7 +1598,7 @@ public class TestAclsEndToEnd {
         BufferedReader in = new BufferedReader(new InputStreamReader(din));
 
         assertEquals("The text read does not match the text written",
-            text, in.readLine());
+            text, BoundedLineReader.readLine(in, 5_000_000));
       }
     });
   }

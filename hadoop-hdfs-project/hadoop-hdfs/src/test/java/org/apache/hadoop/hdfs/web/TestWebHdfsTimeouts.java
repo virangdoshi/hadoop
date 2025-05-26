@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.hdfs.web;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
@@ -316,7 +317,7 @@ public class TestWebHdfsTimeouts {
           isr = new InputStreamReader(in);
           br = new BufferedReader(isr);
           for (;;) {
-            String line = br.readLine();
+            String line = BoundedLineReader.readLine(br, 5_000_000);
             if (line == null || line.isEmpty()) {
               break;
             }

@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -192,7 +193,7 @@ public class DFSck extends Configured implements Tool {
           stream, "UTF-8"));
       try {
         String line = null;
-        while ((line = input.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(input, 5_000_000)) != null) {
           if (line.startsWith(cookiePrefix)){
             try{
               cookie = Integer.parseInt(line.split("\t")[1]);
@@ -353,7 +354,7 @@ public class DFSck extends Configured implements Tool {
     String lastLine = NamenodeFsck.CORRUPT_STATUS;
     int errCode = -1;
     try {
-      while ((line = input.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(input, 5_000_000)) != null) {
         out.println(line);
         lastLine = line;
       }

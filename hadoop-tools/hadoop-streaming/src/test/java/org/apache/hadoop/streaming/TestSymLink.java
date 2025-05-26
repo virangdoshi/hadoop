@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -123,7 +124,7 @@ public class TestSymLink
         System.out.println(fileList[i].toString());
         BufferedReader bread =
           new BufferedReader(new InputStreamReader(fileSys.open(fileList[i])));
-        line = bread.readLine();
+        line = BoundedLineReader.readLine(bread, 5_000_000);
         System.out.println(line);
       }
       assertEquals(cacheString + "\t", line);

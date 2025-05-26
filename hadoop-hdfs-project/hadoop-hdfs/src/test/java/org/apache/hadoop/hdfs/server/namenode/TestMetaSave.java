@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -113,15 +114,15 @@ public class TestMetaSave {
     BufferedReader reader = null;
     try {
       reader = new BufferedReader(new InputStreamReader(in));
-      String line = reader.readLine();
+      String line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals(
           "3 files and directories, 2 blocks = 5 total"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Live Datanodes: 1"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Dead Datanodes: 1"));
-      reader.readLine();
-      line = reader.readLine();
+      BoundedLineReader.readLine(reader, 5_000_000);
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.matches("^/filestatus[01]:.*"));
     } finally {
       if (reader != null)
@@ -156,30 +157,30 @@ public class TestMetaSave {
         "metasaveAfterDelete.out.txt"));
       DataInputStream in = new DataInputStream(fstream);
       reader = new BufferedReader(new InputStreamReader(in));
-      reader.readLine();
-      String line = reader.readLine();
+      BoundedLineReader.readLine(reader, 5_000_000);
+      String line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Live Datanodes: 1"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Dead Datanodes: 1"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Metasave: Blocks waiting for reconstruction: 0"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Metasave: Blocks currently missing: 0"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Mis-replicated blocks that have been postponed:"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Metasave: Blocks being replicated: 0"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Metasave: Blocks 2 waiting deletion from 1 datanodes."));
       //skip 2 lines to reach HDFS-9033 scenario.
-      line = reader.readLine();
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.contains("blk"));
       // skip 1 line for Corrupt Blocks section.
-      line = reader.readLine();
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertTrue(line.equals("Metasave: Number of datanodes: 2"));
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       assertFalse(line.contains("NaN"));
 
     } finally {
@@ -209,7 +210,7 @@ public class TestMetaSave {
       // Validate that file was overwritten (not appended) by checking for
       // presence of only one "Live Datanodes" line.
       boolean foundLiveDatanodesLine = false;
-      String line = rdr.readLine();
+      String line = BoundedLineReader.readLine(rdr, 5_000_000);
       while (line != null) {
         if (line.startsWith("Live Datanodes")) {
           if (foundLiveDatanodesLine) {
@@ -217,7 +218,7 @@ public class TestMetaSave {
           }
           foundLiveDatanodesLine = true;
         }
-        line = rdr.readLine();
+        line = BoundedLineReader.readLine(rdr, 5_000_000);
       }
     } finally {
       IOUtils.cleanup(null, rdr, isr, fis);

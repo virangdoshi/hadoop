@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapreduce;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.BufferedReader;
@@ -413,11 +414,11 @@ public class MapReduceTestUtil {
       LOG.info("Path" + ": "+ outputFile);
       BufferedReader file = 
         new BufferedReader(new InputStreamReader(fs.open(outputFile)));
-      String line = file.readLine();
+      String line = BoundedLineReader.readLine(file, 5_000_000);
       while (line != null) {
         result.append(line);
         result.append("\n");
-        line = file.readLine();
+        line = BoundedLineReader.readLine(file, 5_000_000);
       }
       file.close();
     }

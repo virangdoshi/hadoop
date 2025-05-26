@@ -17,6 +17,7 @@
  */
 
 package org.apache.hadoop.minikdc;
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -453,11 +454,11 @@ public class MiniKdc {
     try {
       r = new BufferedReader(
           new InputStreamReader(is2, StandardCharsets.UTF_8));
-      String line = r.readLine();
+      String line = BoundedLineReader.readLine(r, 5_000_000);
 
       while (line != null) {
         sb.append(line).append("{3}");
-        line = r.readLine();
+        line = BoundedLineReader.readLine(r, 5_000_000);
       }
     } finally {
       IOUtils.closeQuietly(r);

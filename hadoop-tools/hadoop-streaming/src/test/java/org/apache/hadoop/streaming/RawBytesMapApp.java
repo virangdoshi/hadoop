@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class RawBytesMapApp {
   public void go() throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     String line;
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       for (String part : line.split(find)) {
         writeString(part);  // write key
         writeInt(1);        // write value

@@ -18,6 +18,7 @@
 package org.apache.hadoop.fs;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
@@ -74,7 +75,7 @@ public class DU extends CachingGetSpaceUsed {
 
     @Override
     protected void parseExecResult(BufferedReader lines) throws IOException {
-      String line = lines.readLine();
+      String line = BoundedLineReader.readLine(lines, 5_000_000);
       if (line == null) {
         throw new IOException("Expecting a line not the end of stream");
       }

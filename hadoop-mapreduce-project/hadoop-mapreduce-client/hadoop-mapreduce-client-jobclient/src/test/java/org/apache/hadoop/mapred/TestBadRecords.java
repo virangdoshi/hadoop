@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -183,7 +184,7 @@ public class TestBadRecords extends ClusterMapReduceTestCase {
    if (outputFiles.length > 0) {
       InputStream is = getFileSystem().open(outputFiles[0]);
       BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-      String line = reader.readLine();
+      String line = BoundedLineReader.readLine(reader, 5_000_000);
       int counter = 0;
       while (line != null) {
         counter++;
@@ -195,7 +196,7 @@ public class TestBadRecords extends ClusterMapReduceTestCase {
         
         
         assertTrue(reducerOutput.contains(value));
-        line = reader.readLine();
+        line = BoundedLineReader.readLine(reader, 5_000_000);
       }
       reader.close();
       assertEquals(reducerOutput.size(), counter);

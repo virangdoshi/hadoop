@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager.containermanager.launcher;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -1038,15 +1039,15 @@ public class TestContainerLaunch extends BaseContainerManagerTest {
     }
     BufferedReader reader =
         new BufferedReader(new FileReader(processFinalFile));
-    Assert.assertEquals(cId.toString(), reader.readLine());
-    Assert.assertEquals(context.getNodeId().getHost(), reader.readLine());
+    Assert.assertEquals(cId.toString(), BoundedLineReader.readLine(reader, 5_000_000));
+    Assert.assertEquals(context.getNodeId().getHost(), BoundedLineReader.readLine(reader, 5_000_000));
     Assert.assertEquals(String.valueOf(context.getNodeId().getPort()),
-      reader.readLine());
-    Assert.assertEquals(String.valueOf(HTTP_PORT), reader.readLine());
-    Assert.assertEquals(StringUtils.join(",", appDirs), reader.readLine());
-    Assert.assertEquals(user, reader.readLine());
-    Assert.assertEquals(user, reader.readLine());
-    String obtainedPWD = reader.readLine();
+      BoundedLineReader.readLine(reader, 5_000_000));
+    Assert.assertEquals(String.valueOf(HTTP_PORT), BoundedLineReader.readLine(reader, 5_000_000));
+    Assert.assertEquals(StringUtils.join(",", appDirs), BoundedLineReader.readLine(reader, 5_000_000));
+    Assert.assertEquals(user, BoundedLineReader.readLine(reader, 5_000_000));
+    Assert.assertEquals(user, BoundedLineReader.readLine(reader, 5_000_000));
+    String obtainedPWD = BoundedLineReader.readLine(reader, 5_000_000);
     boolean found = false;
     for (Path localDir : appDirs) {
       if (new Path(localDir, cId.toString()).toString().equals(obtainedPWD)) {
@@ -1059,12 +1060,12 @@ public class TestContainerLaunch extends BaseContainerManagerTest {
         conf.get(
               YarnConfiguration.NM_USER_HOME_DIR, 
               YarnConfiguration.DEFAULT_NM_USER_HOME_DIR),
-        reader.readLine());
-    Assert.assertEquals(userConfDir, reader.readLine());
+        BoundedLineReader.readLine(reader, 5_000_000));
+    Assert.assertEquals(userConfDir, BoundedLineReader.readLine(reader, 5_000_000));
     for (String serviceName : containerManager.getAuxServiceMetaData().keySet()) {
       Assert.assertEquals(
           containerManager.getAuxServiceMetaData().get(serviceName),
-          ByteBuffer.wrap(Base64.decodeBase64(reader.readLine().getBytes())));
+          ByteBuffer.wrap(Base64.decodeBase64(BoundedLineReader.readLine(reader, 5_000_000).getBytes())));
     }
 
     Assert.assertEquals(cId.toString(), containerLaunchContext
@@ -1103,9 +1104,9 @@ public class TestContainerLaunch extends BaseContainerManagerTest {
         .get(Environment.HADOOP_CONF_DIR.name()));
 
     // Get the pid of the process
-    String pid = reader.readLine().trim();
+    String pid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     // Now test the stop functionality.
 
@@ -1266,7 +1267,7 @@ public class TestContainerLaunch extends BaseContainerManagerTest {
 
       boolean foundSigTermMessage = false;
       while (true) {
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         if (line == null) {
           break;
         }
@@ -1568,17 +1569,17 @@ public class TestContainerLaunch extends BaseContainerManagerTest {
     BufferedReader reader =
           new BufferedReader(new FileReader(processStartFile));
     // Get the pid of the process
-    String pid = reader.readLine().trim();
+    String pid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
     reader.close();
 
     reader =
           new BufferedReader(new FileReader(childProcessStartFile));
     // Get the pid of the child process
-    String child = reader.readLine().trim();
+    String child = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
     reader.close();
 
     LOG.info("Manually killing pid " + pid + ", but not child pid " + child);
@@ -1771,10 +1772,10 @@ public class TestContainerLaunch extends BaseContainerManagerTest {
         Assert.assertEquals(true, stdout.exists());
         BufferedReader stdoutReader = new BufferedReader(new FileReader(stdout));
         // Get the pid of the process
-        String line = stdoutReader.readLine().trim();
+        String line = BoundedLineReader.readLine(stdoutReader, 5_000_000).trim();
         Assert.assertEquals(TEST_STDOUT_ECHO, line);
         // No more lines
-        Assert.assertEquals(null, stdoutReader.readLine());
+        Assert.assertEquals(null, BoundedLineReader.readLine(stdoutReader, 5_000_000));
         stdoutReader.close();
 
         Assert.assertEquals(true, stderr.exists());

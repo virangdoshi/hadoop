@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -90,11 +91,11 @@ public class TestMiniMRClasspath {
       for(int i=0; i < fileList.length; ++i) {
         BufferedReader file = 
           new BufferedReader(new InputStreamReader(fs.open(fileList[i])));
-        String line = file.readLine();
+        String line = BoundedLineReader.readLine(file, 5_000_000);
         while (line != null) {
           result.append(line);
           result.append("\n");
-          line = file.readLine();
+          line = BoundedLineReader.readLine(file, 5_000_000);
         }
         file.close();
       }
@@ -146,10 +147,10 @@ public class TestMiniMRClasspath {
     for (int i = 0; i < fileList.length; ++i) {
       BufferedReader file = new BufferedReader(new InputStreamReader(
                                                                      fs.open(fileList[i])));
-      String line = file.readLine();
+      String line = BoundedLineReader.readLine(file, 5_000_000);
       while (line != null) {
         result.append(line);
-        line = file.readLine();
+        line = BoundedLineReader.readLine(file, 5_000_000);
         result.append("\n");
       }
       file.close();

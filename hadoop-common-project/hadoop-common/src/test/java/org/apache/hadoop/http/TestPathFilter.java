@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.http;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -93,7 +94,7 @@ public class TestPathFilter extends HttpServerFunctionalTest {
       BufferedReader in = new BufferedReader(new InputStreamReader(
           connection.getInputStream()));
       try {
-        for(; in.readLine() != null; );
+        for(; BoundedLineReader.readLine(in, 5_000_000) != null; );
       } finally {
         in.close();
       }

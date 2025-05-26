@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapreduce.v2;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1042,9 +1043,9 @@ public class TestMRJobs {
       StringReader sr = new StringReader(dirOut);
       BufferedReader br = new BufferedReader(sr);
       try {
-        String line = br.readLine();
+        String line = BoundedLineReader.readLine(br, 5_000_000);
         while (line != null) {
-          line = br.readLine();
+          line = BoundedLineReader.readLine(br, 5_000_000);
           if (line.contains(file.getName()) && line.contains("<SYMLINKD>")) {
             return true;
           }
@@ -1233,7 +1234,7 @@ public class TestMRJobs {
           final BufferedReader syslogReader = new BufferedReader(
               new InputStreamReader(localFs.open(syslog.getPath())));
           try {
-            for (String line; (line = syslogReader.readLine()) != null; ) {
+            for (String line; (line = BoundedLineReader.readLine(syslogReader, 5_000_000)) != null; ) {
               if (line.contains(MRAppMaster.class.getName())) {
                 foundAppMaster = true;
                 break;
@@ -1249,7 +1250,7 @@ public class TestMRJobs {
           final BufferedReader stdoutReader = new BufferedReader(
               new InputStreamReader(localFs.open(stdoutPath)));
           try {
-            for (String line; (line = stdoutReader.readLine()) != null; ) {
+            for (String line; (line = BoundedLineReader.readLine(stdoutReader, 5_000_000)) != null; ) {
               if (line.contains("Full thread dump")) {
                 foundThreadDump = true;
                 break;

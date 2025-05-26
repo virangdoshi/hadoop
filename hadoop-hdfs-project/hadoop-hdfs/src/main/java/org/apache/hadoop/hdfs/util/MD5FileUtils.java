@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,7 +79,7 @@ public abstract class MD5FileUtils {
             md5File), Charsets.UTF_8));
     String md5Line;
     try {
-      md5Line = reader.readLine();
+      md5Line = BoundedLineReader.readLine(reader, 5_000_000);
       if (md5Line == null) { md5Line = ""; }
       md5Line = md5Line.trim();
     } catch (IOException ioe) {

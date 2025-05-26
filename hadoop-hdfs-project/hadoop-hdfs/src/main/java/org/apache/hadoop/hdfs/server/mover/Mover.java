@@ -21,6 +21,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -634,7 +635,7 @@ public class Mover {
           new InputStreamReader(new FileInputStream(file), "UTF-8"));
       try {
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
           if (!line.trim().isEmpty()) {
             list.add(line);
           }

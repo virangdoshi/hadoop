@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -700,10 +701,10 @@ public class DistCpV1 implements Tool {
     FileSystem fs = srcList.getFileSystem(conf);
     try (BufferedReader input = new BufferedReader(new InputStreamReader(fs.open(srcList),
             Charset.forName("UTF-8")))) {
-      String line = input.readLine();
+      String line = BoundedLineReader.readLine(input, 5_000_000);
       while (line != null) {
         result.add(new Path(line));
-        line = input.readLine();
+        line = BoundedLineReader.readLine(input, 5_000_000);
       }
     }
     return result;

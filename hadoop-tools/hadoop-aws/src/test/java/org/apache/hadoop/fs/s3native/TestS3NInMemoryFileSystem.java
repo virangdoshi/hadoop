@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.s3native;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -54,7 +55,7 @@ public class TestS3NInMemoryFileSystem extends TestCase {
     BufferedReader br = new BufferedReader(new InputStreamReader(readData));
     String line = "";
     StringBuffer stringBuffer = new StringBuffer();
-    while ((line = br.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
         stringBuffer.append(line);
     }
     br.close();

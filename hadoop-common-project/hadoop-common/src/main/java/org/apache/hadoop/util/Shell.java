@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -952,11 +953,11 @@ public abstract class Shell {
       @Override
       public void run() {
         try {
-          String line = errReader.readLine();
+          String line = BoundedLineReader.readLine(errReader, 5_000_000);
           while((line != null) && !isInterrupted()) {
             errMsg.append(line);
             errMsg.append(System.getProperty("line.separator"));
-            line = errReader.readLine();
+            line = BoundedLineReader.readLine(errReader, 5_000_000);
           }
         } catch(IOException ioe) {
           // Its normal to observe a "Stream closed" I/O error on
@@ -983,9 +984,9 @@ public abstract class Shell {
     try {
       parseExecResult(inReader); // parse the output
       // clear the input stream buffer
-      String line = inReader.readLine();
+      String line = BoundedLineReader.readLine(inReader, 5_000_000);
       while(line != null) {
-        line = inReader.readLine();
+        line = BoundedLineReader.readLine(inReader, 5_000_000);
       }
       // wait for the process to finish and check the exit code
       exitCode  = process.waitFor();

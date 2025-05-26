@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -544,11 +545,11 @@ public class TestFileUtil {
 
     try {
       Assert.assertEquals("Line 1 of merged file must contain \"foo\".",
-          "foo", rdr.readLine());
+          "foo", BoundedLineReader.readLine(rdr, 5_000_000));
       Assert.assertEquals("Line 2 of merged file must contain \"bar\".",
-          "bar", rdr.readLine());
+          "bar", BoundedLineReader.readLine(rdr, 5_000_000));
       Assert.assertNull("Expected end of file reading merged file.",
-          rdr.readLine());
+          BoundedLineReader.readLine(rdr, 5_000_000));
     }
     finally {
       rdr.close();

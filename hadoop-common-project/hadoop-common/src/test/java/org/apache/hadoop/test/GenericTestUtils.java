@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.test;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -764,8 +765,8 @@ public abstract class GenericTestUtils {
       rb = new BufferedReader(
           new InputStreamReader(new FileInputStream(b)));
       while (true) {
-        String la = ra.readLine();
-        String lb = rb.readLine();
+        String la = BoundedLineReader.readLine(ra, 5_000_000);
+        String lb = BoundedLineReader.readLine(rb, 5_000_000);
         if (la == null) {
           if (lb != null) {
             addPlusses(bld, ra);
@@ -792,7 +793,7 @@ public abstract class GenericTestUtils {
   private static void addPlusses(StringBuilder bld, BufferedReader r)
       throws IOException {
     String l;
-    while ((l = r.readLine()) != null) {
+    while ((l = BoundedLineReader.readLine(r, 5_000_000)) != null) {
       bld.append(" + ").append(l).append("\n");
     }
   }

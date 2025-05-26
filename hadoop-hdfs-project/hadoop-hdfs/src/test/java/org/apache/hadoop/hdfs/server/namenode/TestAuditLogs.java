@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
@@ -357,13 +358,13 @@ public class TestAuditLogs {
 
     try {
       for (int i = 0; i < ndupe; i++) {
-        line = reader.readLine();
+        line = BoundedLineReader.readLine(reader, 5_000_000);
         assertNotNull(line);
         assertTrue("Expected audit event not found in audit log",
             auditPattern.matcher(line).matches());
         ret &= successPattern.matcher(line).matches();
       }
-      assertNull("Unexpected event in audit log", reader.readLine());
+      assertNull("Unexpected event in audit log", BoundedLineReader.readLine(reader, 5_000_000));
       assertTrue("Expected success=" + expectSuccess, ret == expectSuccess);
     } finally {
       reader.close();
@@ -391,12 +392,12 @@ public class TestAuditLogs {
 
     try {
         for (int i = 0; i < ndupe; i++) {
-          line = reader.readLine();
+          line = BoundedLineReader.readLine(reader, 5_000_000);
           assertNotNull(line);
           patternMatches |= pattern.matcher(line).matches();
           ret &= successPattern.matcher(line).matches();
         }
-        assertNull("Unexpected event in audit log", reader.readLine());
+        assertNull("Unexpected event in audit log", BoundedLineReader.readLine(reader, 5_000_000));
         assertTrue("Expected audit event not found in audit log", patternMatches);
         assertTrue("Expected success=" + expectSuccess, ret == expectSuccess);
       } finally {

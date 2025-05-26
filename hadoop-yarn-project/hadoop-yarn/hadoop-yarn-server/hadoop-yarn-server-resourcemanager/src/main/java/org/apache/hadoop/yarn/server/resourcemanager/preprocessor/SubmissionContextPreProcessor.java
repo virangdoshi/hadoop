@@ -19,6 +19,7 @@
 package org.apache.hadoop.yarn.server.resourcemanager.preprocessor;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -168,7 +169,7 @@ public class SubmissionContextPreProcessor {
           reader = new BufferedReader(new InputStreamReader(fileInputStream,
               StandardCharsets.UTF_8));
           String line;
-          while ((line = reader.readLine()) != null) {
+          while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
             // Lines should start with hostname and be followed with commands.
             // Delimiter is any contiguous sequence of space or tab character.
             // Commands are of the form:

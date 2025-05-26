@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.log;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -296,7 +297,7 @@ public class LogLevel {
       BufferedReader in = new BufferedReader(
           new InputStreamReader(connection.getInputStream(), Charsets.UTF_8));
       for (String line;;) {
-        line = in.readLine();
+        line = BoundedLineReader.readLine(in, 5_000_000);
         if (line == null) {
           break;
         }

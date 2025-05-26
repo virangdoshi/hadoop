@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapreduce;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.junit.Assert;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -155,13 +156,13 @@ public class TestNewCombinerGrouping {
       BufferedReader br = new BufferedReader(new FileReader(
           new File(out, "part-r-00000")));
       Set<String> output = new HashSet<String>();
-      String line = br.readLine();
+      String line = BoundedLineReader.readLine(br, 5_000_000);
       Assert.assertNotNull(line);
       output.add(line.substring(0, 1) + line.substring(4, 5));
-      line = br.readLine();
+      line = BoundedLineReader.readLine(br, 5_000_000);
       Assert.assertNotNull(line);
       output.add(line.substring(0, 1) + line.substring(4, 5));
-      line = br.readLine();
+      line = BoundedLineReader.readLine(br, 5_000_000);
       Assert.assertNull(line);
       br.close();
 

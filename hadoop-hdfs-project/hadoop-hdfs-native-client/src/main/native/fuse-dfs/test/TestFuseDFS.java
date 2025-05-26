@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class TestFuseDFS {
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         String line=null;
-        while ( (line = br.readLine()) != null) {
+        while ( (line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
           LOG.error("FUSE_LINE:" + line);
         }
       } catch (IOException e) {

@@ -18,6 +18,7 @@
 package org.apache.hadoop.hdfs.security.token.delegation;
 
 import com.google.common.base.Charsets;
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.hdfs.DFSUtilClient;
 import org.apache.hadoop.hdfs.util.IOUtilsClient;
@@ -143,7 +144,7 @@ public class DelegationUtilsClient {
       connection = run(factory, new URL(buf.toString()));
       in = new BufferedReader(new InputStreamReader(
           connection.getInputStream(), Charsets.UTF_8));
-      long result = Long.parseLong(in.readLine());
+      long result = Long.parseLong(BoundedLineReader.readLine(in, 5_000_000));
       return result;
     } catch (IOException ie) {
       LOG.info("error in renew over HTTP", ie);

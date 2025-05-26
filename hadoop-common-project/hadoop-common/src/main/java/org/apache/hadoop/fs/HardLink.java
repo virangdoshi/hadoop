@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -225,7 +226,7 @@ public class HardLink {
     try {
       shexec.execute();
       in = new BufferedReader(new StringReader(shexec.getOutput()));
-      inpMsg = in.readLine();
+      inpMsg = BoundedLineReader.readLine(in, 5_000_000);
       exitValue = shexec.getExitCode();
       if (inpMsg == null || exitValue != 0) {
         throw createIOException(fileName, inpMsg, errMsg, exitValue, null);

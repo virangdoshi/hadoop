@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.security;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -225,7 +226,7 @@ public class ShellBasedIdMapping implements IdMappingServiceProvider {
           new InputStreamReader(process.getInputStream(),
                                 Charset.defaultCharset()));
       String line = null;
-      while ((line = br.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
         String[] nameId = line.split(regex);
         if ((nameId == null) || (nameId.length != 2)) {
           throw new IOException("Can't parse " + mapName + " list entry:" + line);
@@ -586,7 +587,7 @@ public class ShellBasedIdMapping implements IdMappingServiceProvider {
     
     try {
       String line = null;
-      while ((line = in.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
         // Skip entirely empty and comment lines.
         if (EMPTY_LINE.matcher(line).matches() ||
             COMMENT_LINE.matcher(line).matches()) {

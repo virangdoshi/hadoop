@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.mapred;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 import java.util.*;
 
@@ -151,7 +152,7 @@ public class MRCaching {
           File txt = new File(f, "test.txt");
           FileInputStream fin = new FileInputStream(txt);
           BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
-          String str = reader.readLine();
+          String str = BoundedLineReader.readLine(reader, 5_000_000);
           reader.close();
           out.writeBytes(str);
           out.writeBytes("\n");
@@ -274,12 +275,12 @@ public class MRCaching {
     {
       BufferedReader file = new BufferedReader
          (new InputStreamReader(FileSystem.getLocal(conf).open(result)));
-      String line = file.readLine();
+      String line = BoundedLineReader.readLine(file, 5_000_000);
       while (line != null) {
         if (!testStr.equals(line))
           return new TestResult(job, false);
         count++;
-        line = file.readLine();
+        line = BoundedLineReader.readLine(file, 5_000_000);
 
       }
       file.close();

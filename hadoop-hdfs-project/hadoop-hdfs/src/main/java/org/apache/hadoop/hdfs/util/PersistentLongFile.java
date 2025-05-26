@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -95,7 +96,7 @@ public class PersistentLongFile {
           new BufferedReader(new InputStreamReader(new FileInputStream(
               file), Charsets.UTF_8));
       try {
-        val = Long.parseLong(br.readLine());
+        val = Long.parseLong(BoundedLineReader.readLine(br, 5_000_000));
         br.close();
         br = null;
       } catch (NumberFormatException e) {

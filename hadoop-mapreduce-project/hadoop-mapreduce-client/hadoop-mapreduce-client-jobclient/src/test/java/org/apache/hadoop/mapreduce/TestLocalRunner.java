@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapreduce;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -233,7 +234,7 @@ public class TestLocalRunner {
     BufferedReader r = new BufferedReader(new InputStreamReader(is));
 
     // Should get a single line of the form "0\t(count)"
-    String line = r.readLine().trim();
+    String line = BoundedLineReader.readLine(r, 5_000_000).trim();
     assertTrue("Line does not have correct key", line.startsWith("0\t"));
     int count = Integer.valueOf(line.substring(2));
     assertEquals("Incorrect count generated!", TOTAL_RECORDS, count);
@@ -499,7 +500,7 @@ public class TestLocalRunner {
       FSDataInputStream istream = fs.open(f.getPath());
       BufferedReader r = new BufferedReader(new InputStreamReader(istream));
       String line = null;
-      while ((line = r.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(r, 5_000_000)) != null) {
         valueSum += Integer.valueOf(line.trim());
       }
       r.close();

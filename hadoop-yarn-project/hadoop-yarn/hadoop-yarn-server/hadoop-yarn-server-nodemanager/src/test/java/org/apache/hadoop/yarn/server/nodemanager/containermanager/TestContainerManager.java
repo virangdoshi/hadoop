@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager.containermanager;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.yarn.server.api.AuxiliaryLocalPathHandler;
 import org.apache.hadoop.yarn.server.nodemanager.LocalDirsHandlerService;
 import static org.apache.hadoop.test.MetricsAsserts.assertCounter;
@@ -322,8 +323,8 @@ public class TestContainerManager extends BaseContainerManagerTest {
 
     // Now verify the contents of the file
     BufferedReader reader = new BufferedReader(new FileReader(targetFile));
-    Assert.assertEquals("Hello World!", reader.readLine());
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals("Hello World!", BoundedLineReader.readLine(reader, 5_000_000));
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     //
     // check the localization counter
@@ -461,11 +462,11 @@ public class TestContainerManager extends BaseContainerManagerTest {
     // Now verify the contents of the file
     BufferedReader reader =
         new BufferedReader(new FileReader(processStartFile));
-    Assert.assertEquals("Hello World!", reader.readLine());
+    Assert.assertEquals("Hello World!", BoundedLineReader.readLine(reader, 5_000_000));
     // Get the pid of the process
-    String pid = reader.readLine().trim();
+    String pid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     // Now test the stop functionality.
 
@@ -543,11 +544,11 @@ public class TestContainerManager extends BaseContainerManagerTest {
       // Now verify the contents of the file
       BufferedReader reader =
           new BufferedReader(new FileReader(oldStartFile));
-      Assert.assertEquals(testString, reader.readLine());
+      Assert.assertEquals(testString, BoundedLineReader.readLine(reader, 5_000_000));
       // Get the pid of the process
-      newPid = reader.readLine().trim();
+      newPid = BoundedLineReader.readLine(reader, 5_000_000).trim();
       // No more lines
-      Assert.assertEquals(null, reader.readLine());
+      Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
       reader.close();
       if (!newPid.equals(pid)) {
         break;
@@ -591,20 +592,20 @@ public class TestContainerManager extends BaseContainerManagerTest {
 
     BufferedReader reader =
         new BufferedReader(new FileReader(newStartFile));
-    Assert.assertEquals("Upgrade World!", reader.readLine());
+    Assert.assertEquals("Upgrade World!", BoundedLineReader.readLine(reader, 5_000_000));
 
     // Get the pid of the process
-    String newPid = reader.readLine().trim();
+    String newPid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     Assert.assertNotEquals("Old and New Pids must be different !", pid, newPid);
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     reader.close();
 
     // Verify old file still exists and is accessible by
     // the new process...
     reader = new BufferedReader(new FileReader(oldStartFile));
-    Assert.assertEquals("Hello World!", reader.readLine());
+    Assert.assertEquals("Hello World!", BoundedLineReader.readLine(reader, 5_000_000));
 
     // Assert that the New process is alive
     Assert.assertTrue("New Process is not alive!",
@@ -727,11 +728,11 @@ public class TestContainerManager extends BaseContainerManagerTest {
     // Now verify the contents of the file
     BufferedReader reader =
         new BufferedReader(new FileReader(oldStartFile));
-    Assert.assertEquals("Hello World!", reader.readLine());
+    Assert.assertEquals("Hello World!", BoundedLineReader.readLine(reader, 5_000_000));
     // Get the pid of the process
-    String rolledBackPid = reader.readLine().trim();
+    String rolledBackPid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     Assert.assertNotEquals("The Rolled-back process should be a different pid",
         pids[0], rolledBackPid);
@@ -911,11 +912,11 @@ public class TestContainerManager extends BaseContainerManagerTest {
     // Now verify the contents of the file
     BufferedReader reader =
         new BufferedReader(new FileReader(oldStartFile));
-    Assert.assertEquals("Hello World!", reader.readLine());
+    Assert.assertEquals("Hello World!", BoundedLineReader.readLine(reader, 5_000_000));
     // Get the pid of the process
-    String rolledBackPid = reader.readLine().trim();
+    String rolledBackPid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     Assert.assertNotEquals("The Rolled-back process should be a different pid",
         pid, rolledBackPid);
@@ -1039,11 +1040,11 @@ public class TestContainerManager extends BaseContainerManagerTest {
     // Now verify the contents of the file
     BufferedReader reader =
         new BufferedReader(new FileReader(startFile));
-    Assert.assertEquals("Hello World!", reader.readLine());
+    Assert.assertEquals("Hello World!", BoundedLineReader.readLine(reader, 5_000_000));
     // Get the pid of the process
-    String pid = reader.readLine().trim();
+    String pid = BoundedLineReader.readLine(reader, 5_000_000).trim();
     // No more lines
-    Assert.assertEquals(null, reader.readLine());
+    Assert.assertEquals(null, BoundedLineReader.readLine(reader, 5_000_000));
 
     // Assert that the process is alive
     Assert.assertTrue("Process is not alive!",

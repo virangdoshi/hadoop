@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.applications.distributedshell;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -649,7 +650,7 @@ public class TestDistributedShell {
       try {
         reader = new BufferedReader(new FileReader(entityFile));
         long idPrefix = -1;
-        while ((strLine = reader.readLine()) != null) {
+        while ((strLine = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
           String entityLine = strLine.trim();
           if (entityLine.isEmpty()) {
             continue;
@@ -1323,7 +1324,7 @@ public class TestDistributedShell {
             String sCurrentLine;
             br = new BufferedReader(new FileReader(output));
             int numOfline = 0;
-            while ((sCurrentLine = br.readLine()) != null) {
+            while ((sCurrentLine = BoundedLineReader.readLine(br, 5_000_000)) != null) {
               if (count) {
                 if (sCurrentLine.contains(expectedWord)) {
                   numOfWords++;

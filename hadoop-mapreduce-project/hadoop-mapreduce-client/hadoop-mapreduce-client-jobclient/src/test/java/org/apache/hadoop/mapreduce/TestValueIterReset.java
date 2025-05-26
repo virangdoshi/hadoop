@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapreduce;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -557,7 +558,7 @@ public class TestValueIterReset {
     if (outputFiles.length > 0) {
       InputStream is = localFs.open(outputFiles[0]);
       BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-      String line = reader.readLine();
+      String line = BoundedLineReader.readLine(reader, 5_000_000);
       while (line != null) {
         StringTokenizer tokeniz = new StringTokenizer(line, "\t");
         String key = tokeniz.nextToken();
@@ -565,7 +566,7 @@ public class TestValueIterReset {
         LOG.info("Output: key: "+ key + " value: "+ value);
         int errors = Integer.parseInt(value);
         assertTrue(errors == 0);
-        line = reader.readLine();
+        line = BoundedLineReader.readLine(reader, 5_000_000);
       }   
       reader.close();
     }

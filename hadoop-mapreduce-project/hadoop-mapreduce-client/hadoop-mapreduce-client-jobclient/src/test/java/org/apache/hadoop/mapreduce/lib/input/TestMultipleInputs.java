@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.mapreduce.lib.input;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -134,11 +135,11 @@ public class TestMultipleInputs extends HadoopTestCase {
     BufferedReader output = new BufferedReader(new InputStreamReader(fs
         .open(new Path(outDir, "part-r-00000"))));
     // reducer should have counted one key from each file
-    assertEquals("a 2", output.readLine());
-    assertEquals("b 2", output.readLine());
-    assertEquals("c 2", output.readLine());
-    assertEquals("d 2", output.readLine());
-    assertEquals("e 2", output.readLine());
+    assertEquals("a 2", BoundedLineReader.readLine(output, 5_000_000));
+    assertEquals("b 2", BoundedLineReader.readLine(output, 5_000_000));
+    assertEquals("c 2", BoundedLineReader.readLine(output, 5_000_000));
+    assertEquals("d 2", BoundedLineReader.readLine(output, 5_000_000));
+    assertEquals("e 2", BoundedLineReader.readLine(output, 5_000_000));
   }
 
   @Test

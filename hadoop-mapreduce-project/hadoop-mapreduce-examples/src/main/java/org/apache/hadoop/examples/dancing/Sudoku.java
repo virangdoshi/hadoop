@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.examples.dancing;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.*;
 import java.util.*;
 
@@ -137,7 +138,7 @@ public class Sudoku {
   public Sudoku(InputStream stream) throws IOException {
     BufferedReader file = new BufferedReader(
         new InputStreamReader(stream, Charsets.UTF_8));
-    String line = file.readLine();
+    String line = BoundedLineReader.readLine(file, 5_000_000);
     List<int[]> result = new ArrayList<int[]>();
     while (line != null) {
       StringTokenizer tokenizer = new StringTokenizer(line);
@@ -154,7 +155,7 @@ public class Sudoku {
         y += 1;
       }
       result.add(col);
-      line = file.readLine();
+      line = BoundedLineReader.readLine(file, 5_000_000);
     }
     size = result.size();
     board = result.toArray(new int [size][]);

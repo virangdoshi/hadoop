@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,12 +76,12 @@ public class TestLogalyzer {
 
     FileInputStream fis = new FileInputStream(result);
     BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
-    String line = br.readLine();
+    String line = BoundedLineReader.readLine(br, 5_000_000);
     Assert.assertTrue(("1 44" + TAB + "2").equals(line));
-    line = br.readLine();
+    line = BoundedLineReader.readLine(br, 5_000_000);
 
     Assert.assertTrue(("3 44" + TAB + "1").equals(line));
-    line = br.readLine();
+    line = BoundedLineReader.readLine(br, 5_000_000);
 
     Assert.assertTrue(("4 44" + TAB + "1").equals(line));
 

@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.blockmanagement;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.apache.hadoop.hdfs.server.common.HdfsServerConstants.BlockUCState.UNDER_CONSTRUCTION;
 import static org.apache.hadoop.test.MetricsAsserts.getMetrics;
 import static org.junit.Assert.assertEquals;
@@ -1256,7 +1257,7 @@ public class TestBlockManager {
     String corruptBlocksLine;
     Boolean foundIt = false;
     try {
-      while ((corruptBlocksLine = reader.readLine()) != null) {
+      while ((corruptBlocksLine = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         if (corruptBlocksLine.compareTo("Corrupt Blocks:") == 0) {
           foundIt = true;
           break;
@@ -1264,12 +1265,12 @@ public class TestBlockManager {
       }
       assertTrue("Unexpected text in metasave," +
               "was expecting corrupt blocks section!", foundIt);
-      corruptBlocksLine = reader.readLine();
+      corruptBlocksLine = BoundedLineReader.readLine(reader, 5_000_000);
       String regex = "Block=[0-9]+\\tNode=.*\\tStorageID=.*StorageState.*" +
           "TotalReplicas=.*Reason=GENSTAMP_MISMATCH";
       assertTrue("Unexpected corrupt block section in metasave!",
           corruptBlocksLine.matches(regex));
-      corruptBlocksLine = reader.readLine();
+      corruptBlocksLine = BoundedLineReader.readLine(reader, 5_000_000);
       regex = "Metasave: Number of datanodes.*";
       assertTrue("Unexpected corrupt block section in metasave!",
           corruptBlocksLine.matches(regex));
@@ -1314,7 +1315,7 @@ public class TestBlockManager {
     StringBuffer buffer = new StringBuffer();
     String line;
     try {
-      while ((line = reader.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         buffer.append(line);
       }
       String output = buffer.toString();

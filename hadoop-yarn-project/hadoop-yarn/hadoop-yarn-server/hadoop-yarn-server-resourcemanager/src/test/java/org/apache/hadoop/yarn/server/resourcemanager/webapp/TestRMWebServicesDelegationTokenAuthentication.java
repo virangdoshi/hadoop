@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.resourcemanager.webapp;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -240,7 +241,7 @@ public class TestRMWebServicesDelegationTokenAuthentication {
       String error = "";
       BufferedReader reader = null;
       reader = new BufferedReader(new InputStreamReader(errorStream, "UTF8"));
-      for (String line; (line = reader.readLine()) != null;) {
+      for (String line; (line = BoundedLineReader.readLine(reader, 5_000_000)) != null;) {
         error += line;
       }
       reader.close();
@@ -346,7 +347,7 @@ public class TestRMWebServicesDelegationTokenAuthentication {
         BufferedReader reader = null;
         try {
           reader = new BufferedReader(new InputStreamReader(response, "UTF8"));
-          for (String line; (line = reader.readLine()) != null;) {
+          for (String line; (line = BoundedLineReader.readLine(reader, 5_000_000)) != null;) {
             JSONObject obj = new JSONObject(line);
             if (obj.has("token")) {
               token = obj.getString("token");
@@ -423,7 +424,7 @@ public class TestRMWebServicesDelegationTokenAuthentication {
         BufferedReader reader = null;
         try {
           reader = new BufferedReader(new InputStreamReader(response, "UTF8"));
-          for (String line; (line = reader.readLine()) != null;) {
+          for (String line; (line = BoundedLineReader.readLine(reader, 5_000_000)) != null;) {
             JSONObject obj = new JSONObject(line);
             if (obj.has("token")) {
               reader.close();

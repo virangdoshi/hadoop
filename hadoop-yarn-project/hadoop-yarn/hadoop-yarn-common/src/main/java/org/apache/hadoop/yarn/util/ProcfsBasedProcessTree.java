@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -543,7 +544,7 @@ public class ProcfsBasedProcessTree extends ResourceCalculatorProcessTree {
 
     ret = pinfo;
     try {
-      String str = in.readLine(); // only one line
+      String str = BoundedLineReader.readLine(in, 5_000_000); // only one line
       Matcher m = PROCFS_STAT_FILE_FORMAT.matcher(str);
       boolean mat = m.find();
       if (mat) {
@@ -736,7 +737,7 @@ public class ProcfsBasedProcessTree extends ResourceCalculatorProcessTree {
       in = new BufferedReader(fReader);
 
       try {
-        ret = in.readLine(); // only one line
+        ret = BoundedLineReader.readLine(in, 5_000_000); // only one line
         if (ret == null) {
           ret = "N/A";
         } else {

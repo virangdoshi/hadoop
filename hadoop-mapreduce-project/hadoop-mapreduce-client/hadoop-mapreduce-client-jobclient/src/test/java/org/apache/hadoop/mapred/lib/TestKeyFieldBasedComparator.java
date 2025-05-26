@@ -19,6 +19,7 @@
 package org.apache.hadoop.mapred.lib;
 
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
@@ -115,7 +116,7 @@ public class TestKeyFieldBasedComparator extends HadoopTestCase {
     if (outputFiles.length > 0) {
       InputStream is = getFileSystem().open(outputFiles[0]);
       BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-      String line = reader.readLine();
+      String line = BoundedLineReader.readLine(reader, 5_000_000);
       //make sure we get what we expect as the first line, and also
       //that we have two lines
       if (expect == 1) {
@@ -123,7 +124,7 @@ public class TestKeyFieldBasedComparator extends HadoopTestCase {
       } else if (expect == 2) {
         assertTrue(line.startsWith(line2));
       }
-      line = reader.readLine();
+      line = BoundedLineReader.readLine(reader, 5_000_000);
       if (expect == 1) {
         assertTrue(line.startsWith(line2));
       } else if (expect == 2) {

@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.fs.http.server;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
@@ -182,13 +183,13 @@ public class TestHttpFSServerNoACLs extends HTestCase {
     if ( expectOK ) {
       Assert.assertEquals(HttpURLConnection.HTTP_OK, resp);
       reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      String res = reader.readLine();
+      String res = BoundedLineReader.readLine(reader, 5_000_000);
       Assert.assertTrue(!res.contains("aclBit"));
       Assert.assertTrue(res.contains("owner")); // basic sanity check
     } else {
       Assert.assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, resp);
       reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-      String res = reader.readLine();
+      String res = BoundedLineReader.readLine(reader, 5_000_000);
       Assert.assertTrue(res.contains("AclException"));
       Assert.assertTrue(res.contains("Support for ACLs has been disabled"));
     }
@@ -222,7 +223,7 @@ public class TestHttpFSServerNoACLs extends HTestCase {
       Assert.assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, resp);
       BufferedReader reader;
       reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-      String err = reader.readLine();
+      String err = BoundedLineReader.readLine(reader, 5_000_000);
       Assert.assertTrue(err.contains("AclException"));
       Assert.assertTrue(err.contains("Support for ACLs has been disabled"));
     }

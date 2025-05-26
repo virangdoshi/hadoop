@@ -13,6 +13,7 @@
  */
 package org.apache.hadoop.maven.plugin.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.maven.plugin.Mojo;
 
 import java.io.BufferedReader;
@@ -118,10 +119,10 @@ public class Exec {
     @Override
     public void run() {
       try {
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         while (line != null) {
           output.add(line);
-          line = reader.readLine();
+          line = BoundedLineReader.readLine(reader, 5_000_000);
         }
       } catch (IOException ex) {
         throw new RuntimeException("make failed with error code " + ex.toString());

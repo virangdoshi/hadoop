@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hdfs.server.federation.store.driver.impl;
 
+import io.github.pixee.security.BoundedLineReader;
 import static org.apache.hadoop.hdfs.server.federation.store.StateStoreUtils.filterMultiple;
 import static org.apache.hadoop.util.Time.monotonicNow;
 import static org.apache.hadoop.util.Time.now;
@@ -262,7 +263,7 @@ public abstract class StateStoreFileBaseImpl
     BufferedReader reader = getReader(path);
     try {
       String line;
-      while ((line = reader.readLine()) != null) {
+      while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
         if (!line.startsWith("#") && line.length() > 0) {
           try {
             T record = newRecord(line, clazz, false);

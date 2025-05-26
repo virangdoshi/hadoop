@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.metrics2.sink;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -283,7 +284,7 @@ public class RollingFileSystemSinkTestBase {
         StandardCharsets.UTF_8));
     String line = null;
 
-    while ((line = in.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
       metrics.append(line).append("\n");
     }
   }

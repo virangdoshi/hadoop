@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs.loadGenerator;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -112,7 +113,7 @@ public class DataGenerator extends Configured implements Tool {
         new FileReader(new File(inDir, 
             StructureGenerator.DIR_STRUCTURE_FILE_NAME)));
     String line;
-    while ((line=in.readLine()) != null) {
+    while ((line=BoundedLineReader.readLine(in, 5_000_000)) != null) {
       fc.mkdir(new Path(root+line), FileContext.DEFAULT_PERM, true);
     }
   }
@@ -126,7 +127,7 @@ public class DataGenerator extends Configured implements Tool {
         new FileReader(new File(inDir, 
             StructureGenerator.FILE_STRUCTURE_FILE_NAME)));
     String line;
-    while ((line=in.readLine()) != null) {
+    while ((line=BoundedLineReader.readLine(in, 5_000_000)) != null) {
       String[] tokens = line.split(" ");
       if (tokens.length != 2) {
         throw new IOException("Expect at most 2 tokens per line: " + line);
