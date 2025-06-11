@@ -17,6 +17,8 @@
 
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
@@ -49,8 +51,8 @@ public class TestNameNodeHttpServerXFrame {
   public static URL getServerURL(HttpServer2 server)
       throws MalformedURLException {
     Assert.assertNotNull("No server", server);
-    return new URL("http://"
-        + NetUtils.getHostPortString(server.getConnectorAddress(0)));
+    return Urls.create("http://"
+        + NetUtils.getHostPortString(server.getConnectorAddress(0)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
   }
 
   @Test

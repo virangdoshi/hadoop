@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.namenode.ha;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_EDITS_DIR_KEY;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_SHARED_EDITS_DIR_KEY;
 import static org.junit.Assert.assertEquals;
@@ -116,7 +118,7 @@ public class TestHAConfiguration {
   }
 
   private void assertAddressMatches(String address, URL url) throws MalformedURLException {
-    assertEquals(new URL("http", address, DFSConfigKeys.DFS_NAMENODE_HTTP_PORT_DEFAULT, ""), url);
+    assertEquals(Urls.create("http", address, DFSConfigKeys.DFS_NAMENODE_HTTP_PORT_DEFAULT, "", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), url);
   }
 
   /**

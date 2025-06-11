@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.streaming;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
@@ -41,7 +43,7 @@ public class TestClassWithNoPackage
 
     // Add testjob jar file to classpath.
     Configuration conf = new Configuration();
-    conf.setClassLoader(new URLClassLoader(new URL[]{new URL("file", null, JAR)}, 
+    conf.setClassLoader(new URLClassLoader(new URL[]{Urls.create("file", null, JAR, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)}, 
                                            null));
     // Get class with no package name.
     String defaultPackage = this.getClass().getPackage().getName();

@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.test;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -156,9 +158,9 @@ public class TestJettyHelper implements MethodRule {
     }
     try {
       String scheme = (helper.ssl) ? "https" : "http";
-      return new URL(scheme + "://" +
+      return Urls.create(scheme + "://" +
           helper.server.getConnectors()[0].getHost() + ":" +
-          helper.server.getConnectors()[0].getPort());
+          helper.server.getConnectors()[0].getPort(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     } catch (MalformedURLException ex) {
       throw new RuntimeException("It should never happen, " + ex.getMessage(), ex);
     }

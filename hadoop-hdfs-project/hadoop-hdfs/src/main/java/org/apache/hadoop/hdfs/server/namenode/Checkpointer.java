@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_BACKUP_HTTP_ADDRESS_DEFAULT;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_BACKUP_HTTP_ADDRESS_KEY;
 import static org.apache.hadoop.util.Time.monotonicNow;
@@ -289,7 +291,7 @@ class Checkpointer extends Daemon {
     InetSocketAddress httpSocAddr = backupNode.getHttpAddress();
     int httpPort = httpSocAddr.getPort();
     try {
-      return new URL(DFSUtil.getHttpClientScheme(conf) + "://" + infoBindAddress + ":" + httpPort);
+      return Urls.create(DFSUtil.getHttpClientScheme(conf) + "://" + infoBindAddress + ":" + httpPort, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     } catch (MalformedURLException e) {
       // Unreachable
       throw new RuntimeException(e);

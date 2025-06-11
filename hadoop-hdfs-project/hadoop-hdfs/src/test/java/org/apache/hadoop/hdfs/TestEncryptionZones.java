@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -2222,13 +2224,12 @@ public class TestEncryptionZones {
     DFSTestUtil.writeFile(fs, encryptedFilePath, content);
 
     InetSocketAddress addr = cluster.getNameNode().getHttpAddress();
-    URL url = new URL("http", addr.getHostString(), addr.getPort(),
-        WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString()
-        + "?op=OPEN");
+    URL url = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString()
+        + "?op=OPEN", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     // Return a connection with client not supporting EZ.
     HttpURLConnection namenodeConnection = returnConnection(url, "GET", false);
     String location = namenodeConnection.getHeaderField("Location");
-    URL datanodeURL = new URL(location);
+    URL datanodeURL = Urls.create(location, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     String path = datanodeURL.getPath();
     Assert.assertEquals(
         WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString(), path);
@@ -2257,26 +2258,24 @@ public class TestEncryptionZones {
     DFSTestUtil.writeFile(fs, encryptedFilePath, content);
 
     InetSocketAddress addr = cluster.getNameNode().getHttpAddress();
-    URL url = new URL("http", addr.getHostString(), addr.getPort(),
-        WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString()
-        + "?op=OPEN");
+    URL url = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString()
+        + "?op=OPEN", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     // Return a connection with client not supporting EZ.
     HttpURLConnection namenodeConnection =
         returnConnection(url, "GET", false);
     Assert.assertNotNull(namenodeConnection.getHeaderField("Location"));
-    URL datanodeUrl = new URL(namenodeConnection.getHeaderField("Location"));
+    URL datanodeUrl = Urls.create(namenodeConnection.getHeaderField("Location"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     Assert.assertNotNull(datanodeUrl);
     String path = datanodeUrl.getPath();
     Assert.assertEquals(
         WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString(), path);
 
-    url = new URL("http", addr.getHostString(), addr.getPort(),
-        WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString()
-        + "?op=OPEN");
+    url = Urls.create("http", addr.getHostString(), addr.getPort(), WebHdfsFileSystem.PATH_PREFIX + encryptedFilePath.toString()
+        + "?op=OPEN", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     // Return a connection with client supporting EZ.
     namenodeConnection = returnConnection(url, "GET", true);
     Assert.assertNotNull(namenodeConnection.getHeaderField("Location"));
-    datanodeUrl = new URL(namenodeConnection.getHeaderField("Location"));
+    datanodeUrl = Urls.create(namenodeConnection.getHeaderField("Location"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     Assert.assertNotNull(datanodeUrl);
     path = datanodeUrl.getPath();
     Assert.assertEquals(WebHdfsFileSystem.PATH_PREFIX

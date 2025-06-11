@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.nfs.nfs3;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -83,7 +85,7 @@ public class TestNfs3HttpServer {
     String urlRoot = infoServer.getServerURI().toString();
 
     // Check default servlets.
-    String pageContents = DFSTestUtil.urlGet(new URL(urlRoot + "/jmx"));
+    String pageContents = DFSTestUtil.urlGet(Urls.create(urlRoot + "/jmx", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     assertTrue("Bad contents: " + pageContents,
         pageContents.contains("java.lang:type="));
     System.out.println("pc:" + pageContents);

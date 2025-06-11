@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -123,8 +125,8 @@ public class TestSSLHttpServer extends HttpServerFunctionalTest {
     server.addServlet("echo", "/echo", TestHttpServer.EchoServlet.class);
     server.addServlet("longheader", "/longheader", LongHeaderServlet.class);
     server.start();
-    baseUrl = new URL("https://"
-        + NetUtils.getHostPortString(server.getConnectorAddress(0)));
+    baseUrl = Urls.create("https://"
+        + NetUtils.getHostPortString(server.getConnectorAddress(0)), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     LOG.info("HTTP server started: " + baseUrl);
   }
 
@@ -183,9 +185,8 @@ public class TestSSLHttpServer extends HttpServerFunctionalTest {
 
   @Test
   public void testEcho() throws Exception {
-    assertEquals("a:b\nc:d\n", readOut(new URL(baseUrl, "/echo?a=b&c=d")));
-    assertEquals("a:b\nc&lt;:d\ne:&gt;\n", readOut(new URL(baseUrl,
-        "/echo?a=b&c<=d&e=>")));
+    assertEquals("a:b\nc:d\n", readOut(Urls.create(baseUrl, "/echo?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
+    assertEquals("a:b\nc&lt;:d\ne:&gt;\n", readOut(Urls.create(baseUrl, "/echo?a=b&c<=d&e=>", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
   }
 
   /**
@@ -195,7 +196,7 @@ public class TestSSLHttpServer extends HttpServerFunctionalTest {
    */
   @Test
   public void testLongHeader() throws Exception {
-    URL url = new URL(baseUrl, "/longheader");
+    URL url = Urls.create(baseUrl, "/longheader", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     conn.setSSLSocketFactory(clientSslFactory.createSSLSocketFactory());
     testLongHeader(conn);
@@ -218,7 +219,7 @@ public class TestSSLHttpServer extends HttpServerFunctionalTest {
    */
   @Test
   public void testExcludedCiphers() throws Exception {
-    URL url = new URL(baseUrl, "/echo?a=b&c=d");
+    URL url = Urls.create(baseUrl, "/echo?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     SSLSocketFactory sslSocketF = clientSslFactory.createSSLSocketFactory();
     PrefferedCipherSSLSocketFactory testPreferredCipherSSLSocketF
@@ -242,7 +243,7 @@ public class TestSSLHttpServer extends HttpServerFunctionalTest {
    */
   @Test
   public void testOneEnabledCiphers() throws Exception {
-    URL url = new URL(baseUrl, "/echo?a=b&c=d");
+    URL url = Urls.create(baseUrl, "/echo?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     SSLSocketFactory sslSocketF = clientSslFactory.createSSLSocketFactory();
     PrefferedCipherSSLSocketFactory testPreferredCipherSSLSocketF
@@ -268,7 +269,7 @@ public class TestSSLHttpServer extends HttpServerFunctionalTest {
    */
   @Test
   public void testExclusiveEnabledCiphers() throws Exception {
-    URL url = new URL(baseUrl, "/echo?a=b&c=d");
+    URL url = Urls.create(baseUrl, "/echo?a=b&c=d", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     SSLSocketFactory sslSocketF = clientSslFactory.createSSLSocketFactory();
     PrefferedCipherSSLSocketFactory testPreferredCipherSSLSocketF

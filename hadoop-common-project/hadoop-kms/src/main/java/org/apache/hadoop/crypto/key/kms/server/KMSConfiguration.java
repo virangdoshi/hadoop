@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.crypto.key.kms.server;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -102,7 +104,7 @@ public class KMSConfiguration {
               "' must be an absolute path: " + confDir);
         }
         for (String resource : resources) {
-          conf.addResource(new URL("file://" + new Path(confDir, resource).toUri()));
+          conf.addResource(Urls.create("file://" + new Path(confDir, resource).toUri(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
         }
       } catch (MalformedURLException ex) {
         throw new RuntimeException(ex);

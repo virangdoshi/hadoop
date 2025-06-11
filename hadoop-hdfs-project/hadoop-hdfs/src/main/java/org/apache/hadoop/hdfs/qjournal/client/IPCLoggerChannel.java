@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.qjournal.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -282,7 +284,7 @@ public class IPCLoggerChannel implements AsyncLogger {
     try {
       String path = GetJournalEditServlet.buildPath(
           journalId, segmentTxId, nsInfo);
-      return new URL(httpServerURL, path);
+      return Urls.create(httpServerURL, path, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     } catch (MalformedURLException e) {
       // should never get here.
       throw new RuntimeException(e);
@@ -749,7 +751,7 @@ public class IPCLoggerChannel implements AsyncLogger {
    */
   private URL getHttpServerURI(String scheme, int port) {
     try {
-      return new URL(scheme, addr.getHostName(), port, "");
+      return Urls.create(scheme, addr.getHostName(), port, "", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     } catch (MalformedURLException e) {
       // Unreachable
       throw new RuntimeException(e);

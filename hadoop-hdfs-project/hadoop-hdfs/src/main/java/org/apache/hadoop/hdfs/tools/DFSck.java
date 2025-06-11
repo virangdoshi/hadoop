@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.tools;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -180,7 +182,7 @@ public class DFSck extends Configured implements Tool {
       if (cookie > 0) {
         url.append("&startblockafter=").append(String.valueOf(cookie));
       }
-      URL path = new URL(url.toString());
+      URL path = Urls.create(url.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
       URLConnection connection;
       try {
         connection = connectionFactory.openConnection(path, isSpnegoEnabled);
@@ -339,7 +341,7 @@ public class DFSck extends Configured implements Tool {
     if (doListCorruptFileBlocks) {
       return listCorruptFileBlocks(dir, url.toString());
     }
-    URL path = new URL(url.toString());
+    URL path = Urls.create(url.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     URLConnection connection;
     try {
       connection = connectionFactory.openConnection(path, isSpnegoEnabled);

@@ -17,6 +17,8 @@
  */
 package org.apache.hadoop.hdfs.server.namenode;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -223,7 +225,7 @@ public class TransferFsImage {
   public static TransferResult uploadImageFromStorage(URL fsName, Configuration conf,
       NNStorage storage, NameNodeFile nnf, long txid, Canceler canceler)
       throws IOException {
-    URL url = new URL(fsName, ImageServlet.PATH_SPEC);
+    URL url = Urls.create(fsName, ImageServlet.PATH_SPEC, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     long startTime = Time.monotonicNow();
     try {
       uploadImage(url, conf, storage, nnf, txid, canceler);
@@ -412,7 +414,7 @@ public class TransferFsImage {
   static MD5Hash getFileClient(URL infoServer,
       String queryString, List<File> localPaths,
       Storage dstStorage, boolean getChecksum) throws IOException {
-    URL url = new URL(infoServer, ImageServlet.PATH_SPEC + "?" + queryString);
+    URL url = Urls.create(infoServer, ImageServlet.PATH_SPEC + "?" + queryString, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     LOG.info("Opening connection to " + url);
     return doGetUrl(url, localPaths, dstStorage, getChecksum);
   }

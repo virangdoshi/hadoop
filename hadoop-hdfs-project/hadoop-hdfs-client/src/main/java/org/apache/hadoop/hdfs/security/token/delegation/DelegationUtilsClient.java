@@ -18,6 +18,8 @@
 package org.apache.hadoop.hdfs.security.token.delegation;
 
 import com.google.common.base.Charsets;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.hdfs.DFSUtilClient;
 import org.apache.hadoop.hdfs.util.IOUtilsClient;
@@ -82,7 +84,7 @@ public class DelegationUtilsClient {
     try {
       LOG.debug("Retrieving token from: {}", buf);
 
-      conn = run(factory, new URL(buf.toString()));
+      conn = run(factory, Urls.create(buf.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
       InputStream in = conn.getInputStream();
       Credentials ts = new Credentials();
       dis = new DataInputStream(in);
@@ -117,7 +119,7 @@ public class DelegationUtilsClient {
         .append(CANCEL_DELEGATION_TOKEN_PATH_SPEC).append("?")
         .append(TOKEN).append("=")
         .append(tok.encodeToUrlString());
-    HttpURLConnection conn = run(factory, new URL(buf.toString()));
+    HttpURLConnection conn = run(factory, Urls.create(buf.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
     conn.disconnect();
   }
 
@@ -140,7 +142,7 @@ public class DelegationUtilsClient {
     HttpURLConnection connection = null;
     BufferedReader in = null;
     try {
-      connection = run(factory, new URL(buf.toString()));
+      connection = run(factory, Urls.create(buf.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
       in = new BufferedReader(new InputStreamReader(
           connection.getInputStream(), Charsets.UTF_8));
       long result = Long.parseLong(in.readLine());

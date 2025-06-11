@@ -18,6 +18,8 @@
 
 package org.apache.hadoop.test;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -138,7 +140,7 @@ public class TestHTestCase extends HTestCase {
     Server server = TestJettyHelper.getJettyServer();
     server.addHandler(context);
     server.start();
-    URL url = new URL(TestJettyHelper.getJettyURL(), "/bar");
+    URL url = Urls.create(TestJettyHelper.getJettyURL(), "/bar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     assertEquals(conn.getResponseCode(), HttpURLConnection.HTTP_OK);
     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
