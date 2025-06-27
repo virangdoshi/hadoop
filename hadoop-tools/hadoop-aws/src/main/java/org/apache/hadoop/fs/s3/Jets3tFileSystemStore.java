@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -264,7 +265,7 @@ class Jets3tFileSystemStore implements FileSystemStore {
     if (!dir.exists() && !dir.mkdirs()) {
       throw new IOException("Cannot create S3 buffer directory: " + dir);
     }
-    File result = File.createTempFile("input-", ".tmp", dir);
+    File result = Files.createTempFile(dir.toPath(), "input-", ".tmp").toFile();
     result.deleteOnExit();
     return result;
   }

@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.tools;
 
+import java.nio.file.Files;
 import static org.mockito.Mockito.*;
 
 import org.apache.commons.logging.Log;
@@ -347,9 +348,9 @@ public class TestCopyListing extends SimpleCopyListing {
   
   @Test
   public void testFailOnCloseError() throws IOException {
-    File inFile = File.createTempFile("TestCopyListingIn", null);
+    File inFile = Files.createTempFile("TestCopyListingIn", null).toFile();
     inFile.deleteOnExit();
-    File outFile = File.createTempFile("TestCopyListingOut", null);
+    File outFile = Files.createTempFile("TestCopyListingOut", null).toFile();
     outFile.deleteOnExit();
     List<Path> srcs = new ArrayList<Path>();
     srcs.add(new Path(inFile.toURI()));

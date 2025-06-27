@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.resourcemanager;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -737,7 +738,7 @@ public class TestClientRMService {
     ClientRMService rmService =
         new ClientRMService(rmContext, scheduler, appManager,
             mockAclsManager, mockQueueACLsManager, null);
-    File rulesFile = File.createTempFile("submission_rules", ".tmp");
+    File rulesFile = Files.createTempFile("submission_rules", ".tmp").toFile();
     rulesFile.deleteOnExit();
     rulesFile.createNewFile();
 

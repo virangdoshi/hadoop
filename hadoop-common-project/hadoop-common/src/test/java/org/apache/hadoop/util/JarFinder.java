@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
@@ -159,7 +160,7 @@ public class JarFinder {
             if (!testDir.exists()) {
               testDir.mkdirs();
             }
-            File tempJar = File.createTempFile("hadoop-", "", testDir);
+            File tempJar = Files.createTempFile(testDir.toPath(), "hadoop-", "").toFile();
             tempJar = new File(tempJar.getAbsolutePath() + ".jar");
             createJar(baseDir, tempJar);
             tempJar.deleteOnExit();

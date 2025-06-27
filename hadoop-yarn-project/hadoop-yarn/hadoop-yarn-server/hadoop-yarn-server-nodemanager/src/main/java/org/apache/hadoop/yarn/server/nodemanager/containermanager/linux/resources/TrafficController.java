@@ -20,6 +20,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager.containermanager.linux.resources;
 
+import java.nio.file.Files;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
@@ -625,8 +626,8 @@ import java.util.regex.Pattern;
     public PrivilegedOperation commitBatchToTempFile()
         throws ResourceHandlerException {
       try {
-        File tcCmds = File.createTempFile(TMP_FILE_PREFIX, TMP_FILE_SUFFIX, new
-            File(tmpDirPath));
+        File tcCmds = Files.createTempFile(new
+            File(tmpDirPath).toPath(), TMP_FILE_PREFIX, TMP_FILE_SUFFIX).toFile();
 
         try (
             Writer writer = new OutputStreamWriter(new FileOutputStream(tcCmds),

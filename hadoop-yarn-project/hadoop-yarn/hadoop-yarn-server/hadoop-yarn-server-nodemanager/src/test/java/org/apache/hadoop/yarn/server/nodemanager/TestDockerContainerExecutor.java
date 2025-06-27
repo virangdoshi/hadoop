@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.yarn.server.nodemanager;
 
+import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -195,7 +196,7 @@ public class TestDockerContainerExecutor {
   // Write the script used to launch the docker container in a temp file
   private String writeScriptFile(Map<String, String> launchCtxEnv,
     String... cmd) throws IOException {
-    File f = File.createTempFile("TestDockerContainerExecutor", ".sh");
+    File f = Files.createTempFile("TestDockerContainerExecutor", ".sh").toFile();
     f.deleteOnExit();
     PrintWriter p = new PrintWriter(new FileOutputStream(f));
     for(Map.Entry<String, String> entry: launchCtxEnv.entrySet()) {
