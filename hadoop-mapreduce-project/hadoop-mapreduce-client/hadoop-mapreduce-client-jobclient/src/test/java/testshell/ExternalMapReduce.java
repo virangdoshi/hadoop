@@ -18,6 +18,7 @@
 
 package testshell;
 
+import io.github.pixee.security.SystemCommand;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -81,7 +82,7 @@ public class ExternalMapReduce extends Configured implements Tool {
       argv[4] = "tarlink";
       argv[5] = "ziplink";
       argv[6] = "test.tgz";
-      Process p = Runtime.getRuntime().exec(argv);
+      Process p = SystemCommand.runCommand(Runtime.getRuntime(), argv);
       int ret = -1;
       try {
         ret = p.waitFor();

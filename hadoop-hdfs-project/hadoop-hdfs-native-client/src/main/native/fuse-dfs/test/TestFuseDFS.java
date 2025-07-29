@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 
+import io.github.pixee.security.SystemCommand;
 import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class TestFuseDFS {
   /** Exec the given command and assert it executed successfully */
   private static void execWaitRet(String cmd) throws IOException {
     LOG.debug("EXEC "+cmd);
-    Process p = r.exec(cmd);
+    Process p = SystemCommand.runCommand(r, cmd);
     try {
       p.waitFor();
     } catch (InterruptedException ie) {
@@ -99,19 +100,19 @@ public class TestFuseDFS {
   /** Exec the given command and assert it executed successfully */
   private static void execIgnoreRet(String cmd) throws IOException {
     LOG.debug("EXEC "+cmd);
-    r.exec(cmd);
+    SystemCommand.runCommand(r, cmd);
   }
 
   /** Exec the given command and assert it executed successfully */
   private static void execAssertSucceeds(String cmd) throws IOException {
     LOG.debug("EXEC "+cmd);
-    checkProcessRet(r.exec(cmd), true);
+    checkProcessRet(SystemCommand.runCommand(r, cmd), true);
   }
 
   /** Exec the given command, assert it returned an error code */
   private static void execAssertFails(String cmd) throws IOException {
     LOG.debug("EXEC "+cmd);
-    checkProcessRet(r.exec(cmd), false);
+    checkProcessRet(SystemCommand.runCommand(r, cmd), false);
   }
 
   /** Create and write the given file */
@@ -206,7 +207,7 @@ public class TestFuseDFS {
       cmdStr += (" " + c);
     }
     LOG.info("now mounting with:" + cmdStr);
-    Process fuseProcess = r.exec(mountCmd, env);
+    Process fuseProcess = SystemCommand.runCommand(r, mountCmd, env);
     RedirectToStdoutThread stdoutThread =
       new RedirectToStdoutThread(fuseProcess.getInputStream());
     RedirectToStdoutThread stderrThread =

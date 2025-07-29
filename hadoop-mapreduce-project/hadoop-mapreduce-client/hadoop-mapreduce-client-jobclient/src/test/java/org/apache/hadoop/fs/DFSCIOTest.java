@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.fs;
 
+import io.github.pixee.security.SystemCommand;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -229,7 +230,7 @@ public class DFSCIOTest {
             FileUtil.copy(fs, HDFS_SHLIB, localFS, HDFS_SHLIB, false, fsConfig);
 
             String chmodCmd = new String(CHMOD + " a+x " + HDFS_SHLIB);
-            Process process = runTime.exec(chmodCmd);
+            Process process = SystemCommand.runCommand(runTime, chmodCmd);
             int exitStatus = process.waitFor();
             if (exitStatus != 0) {
               throw new IOException(chmodCmd + ": Failed with exitStatus: " + exitStatus);
@@ -242,7 +243,7 @@ public class DFSCIOTest {
             FileUtil.copy(fs, HDFS_WRITE, localFS, HDFS_WRITE, false, fsConfig);
 
             String chmodCmd = new String(CHMOD + " a+x " + HDFS_WRITE); 
-            Process process = runTime.exec(chmodCmd);
+            Process process = SystemCommand.runCommand(runTime, chmodCmd);
             int exitStatus = process.waitFor();
             if (exitStatus != 0) {
               throw new IOException(chmodCmd + ": Failed with exitStatus: " + exitStatus);
@@ -253,7 +254,7 @@ public class DFSCIOTest {
         // exec the C program
         Path outFile = new Path(DATA_DIR, name);
         String writeCmd = new String(HDFS_WRITE + " " + outFile + " " + totalSize + " " + bufferSize); 
-        Process process = runTime.exec(writeCmd, null, new File(HDFS_TEST_DIR.toString()));
+        Process process = SystemCommand.runCommand(runTime, writeCmd, null, new File(HDFS_TEST_DIR.toString()));
         int exitStatus = process.waitFor();
         if (exitStatus != 0) {
           throw new IOException(writeCmd + ": Failed with exitStatus: " + exitStatus);
@@ -331,7 +332,7 @@ public class DFSCIOTest {
             }
 
             String chmodCmd = new String(CHMOD + " a+x " + HDFS_SHLIB);
-            Process process = runTime.exec(chmodCmd);
+            Process process = SystemCommand.runCommand(runTime, chmodCmd);
             int exitStatus = process.waitFor();
             if (exitStatus != 0) {
               throw new IOException(chmodCmd + ": Failed with exitStatus: " + exitStatus);
@@ -346,7 +347,7 @@ public class DFSCIOTest {
             }
 
             String chmodCmd = new String(CHMOD + " a+x " + HDFS_READ); 
-            Process process = runTime.exec(chmodCmd);
+            Process process = SystemCommand.runCommand(runTime, chmodCmd);
             int exitStatus = process.waitFor();
              
             if (exitStatus != 0) {
@@ -359,7 +360,7 @@ public class DFSCIOTest {
         Path inFile = new Path(DATA_DIR, name);
         String readCmd = new String(HDFS_READ + " " + inFile + " " + totalSize + " " + 
                                     bufferSize); 
-        Process process = runTime.exec(readCmd, null, new File(HDFS_TEST_DIR.toString()));
+        Process process = SystemCommand.runCommand(runTime, readCmd, null, new File(HDFS_TEST_DIR.toString()));
         int exitStatus = process.waitFor();
         
         if (exitStatus != 0) {

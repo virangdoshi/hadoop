@@ -16,6 +16,7 @@
  */
 package org.apache.hadoop.security;
 
+import io.github.pixee.security.SystemCommand;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.Path;
@@ -233,7 +234,7 @@ public class TestUserGroupInformation {
       userName = StringUtils.toLowerCase(userName);
     }
     // get the groups
-    pp = Runtime.getRuntime().exec(Shell.WINDOWS ?
+    pp = SystemCommand.runCommand(Runtime.getRuntime(), Shell.WINDOWS ?
       Shell.getWinUtilsPath() + " groups -F"
       : "id -Gn " + userName);
     br = new BufferedReader(new InputStreamReader(pp.getInputStream()));
